@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings | Parent | SchoolFood</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="../assets/css/style.css" rel="stylesheet">
+  <link href="../assets/css/dashboard.css" rel="stylesheet">
+  <link href="../assets/css/components.css" rel="stylesheet">
+  <link href="../assets/css/forms.css" rel="stylesheet">
+  <link href="../assets/css/rtl.css" rel="stylesheet">
+  <link href="../assets/css/responsive.css" rel="stylesheet">
+</head>
+<body>
+  <div class="app-shell"><div class="app-main"><div class="app-content">
+    <div class="page-header">
+      <div class="page-header-text"><h1 data-i18n="settings">Settings</h1></div>
+      <button type="button" class="btn-app btn-primary-app" id="btnSaveParentSettings" data-i18n="saveChanges">Save</button>
+    </div>
+    <div class="tabs-app">
+      <button type="button" class="tab-btn active" data-tab="profile" data-i18n="profile">Profile</button>
+      <button type="button" class="tab-btn" data-tab="notifications" data-i18n="notifications">Notifications</button>
+      <button type="button" class="tab-btn" data-tab="payments" data-i18n="paymentMethods">Payment Methods</button>
+      <button type="button" class="tab-btn" data-tab="security" data-i18n="security">Security</button>
+    </div>
+    <div class="tab-panel active" id="panel-profile">
+      <div class="settings-card" style="max-width:520px">
+        <div class="row g-2">
+          <div class="col-6 form-group-app"><label class="form-label-app" data-i18n="firstName">First</label><input id="setFirst" class="form-control-app"></div>
+          <div class="col-6 form-group-app"><label class="form-label-app" data-i18n="lastName">Last</label><input id="setLast" class="form-control-app"></div>
+          <div class="col-12 form-group-app"><label class="form-label-app" data-i18n="email">Email</label><input id="setEmail" class="form-control-app"></div>
+          <div class="col-12 form-group-app"><label class="form-label-app" data-i18n="phone">Phone</label><input id="setPhone" class="form-control-app"></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-panel" id="panel-notifications">
+      <div class="settings-card" style="max-width:520px">
+        <div class="check-list">
+          <label class="check-item"><input type="checkbox" id="notif-orderConfirmation"> <span>Order confirmation</span></label>
+          <label class="check-item"><input type="checkbox" id="notif-orderStatus"> <span>Order status updates</span></label>
+          <label class="check-item"><input type="checkbox" id="notif-cancellation"> <span>Cancellation/refund</span></label>
+          <label class="check-item"><input type="checkbox" id="notif-deadlineReminder"> <span>Ordering deadline reminder</span></label>
+          <label class="check-item"><input type="checkbox" id="notif-lowBalance"> <span>Child balance is low</span></label>
+          <label class="check-item"><input type="checkbox" id="notif-dailyLimitReached"> <span>Daily limit reached</span></label>
+        </div>
+      </div>
+    </div>
+    <div class="tab-panel" id="panel-payments">
+      <div class="settings-card" style="max-width:520px">
+        <div id="paymentList"></div>
+        <p class="small text-muted mt-3">Add payment method UI is demo-only (no real charges).</p>
+      </div>
+    </div>
+    <div class="tab-panel" id="panel-security">
+      <div class="settings-card" style="max-width:520px">
+        <p class="text-muted">Change password UI only — no real authentication in this prototype.</p>
+        <input type="password" class="form-control-app mb-2" placeholder="Current password" disabled>
+        <input type="password" class="form-control-app" placeholder="New password" disabled>
+      </div>
+    </div>
+  </div></div></div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/mock-data.js"></script>
+  <script src="../assets/js/translations.js"></script>
+  <script src="../assets/js/services/canteen-service.js"></script>
+  <script src="../assets/js/services/child-service.js"></script>
+  <script src="../assets/js/services/wallet-service.js"></script>
+  <script src="../assets/js/components.js"></script>
+  <script src="../assets/js/navigation.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/parent.js"></script>
+  <script>$(function(){ ParentApp.initSettings(); });</script>
+</body>
+</html>

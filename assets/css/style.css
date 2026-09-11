@@ -5,13 +5,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap');
 
 :root {
-  /* Brand — trustworthy teal for school food SaaS */
-  --primary: #0c7a6f;
-  --primary-dark: #095a52;
-  --primary-light: #e6f5f3;
-  --primary-hover: #0a6b61;
-  --accent: #d97706;
-  --accent-light: #fef3c7;
+  /* Brand — navy + sage inspired by product visual references */
+  --primary: #1a365d;
+  --primary-dark: #122846;
+  --primary-light: #e8eef6;
+  --primary-hover: #152c4d;
+  --accent: #5f8f75;
+  --accent-light: #e8f3ec;
 
   /* Neutrals */
   --text: #15202b;
@@ -37,8 +37,8 @@
 
   /* Radius */
   --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
   --radius-xl: 24px;
   --radius-full: 9999px;
 
@@ -47,7 +47,7 @@
   --shadow-sm: 0 1px 3px rgba(21, 32, 43, 0.06), 0 1px 2px rgba(21, 32, 43, 0.04);
   --shadow-md: 0 4px 12px rgba(21, 32, 43, 0.07), 0 2px 4px rgba(21, 32, 43, 0.04);
   --shadow-lg: 0 12px 32px rgba(21, 32, 43, 0.1), 0 4px 8px rgba(21, 32, 43, 0.04);
-  --shadow-focus: 0 0 0 3px rgba(12, 122, 111, 0.2);
+  --shadow-focus: 0 0 0 3px rgba(26, 54, 93, 0.2);
 
   /* Layout */
   --sidebar-width: 260px;
@@ -179,7 +179,7 @@ img.object-cover {
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: linear-gradient(145deg, var(--primary) 0%, #0f9a8a 100%);
+  background: linear-gradient(145deg, var(--primary) 0%, #2d5a87 100%);
   display: grid;
   place-items: center;
   color: #fff;
@@ -193,9 +193,9 @@ img.object-cover {
   align-items: center;
   padding: 4rem 0 5rem;
   background:
-    radial-gradient(ellipse 80% 60% at 70% 20%, rgba(12, 122, 111, 0.12) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 40% at 10% 80%, rgba(217, 119, 6, 0.08) 0%, transparent 50%),
-    linear-gradient(180deg, #f8fafb 0%, #eef5f4 100%);
+    radial-gradient(ellipse 80% 60% at 70% 20%, rgba(26, 54, 93, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 10% 80%, rgba(95, 143, 117, 0.12) 0%, transparent 50%),
+    linear-gradient(180deg, #f8fafb 0%, #eef1f6 100%);
   overflow: hidden;
 }
 
@@ -203,7 +203,7 @@ img.object-cover {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230c7a6f' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231a365d' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   pointer-events: none;
 }
 
@@ -319,7 +319,7 @@ img.object-cover {
 }
 
 .cta-band {
-  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 55%, #0f9a8a 100%);
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 55%, #2d5a87 100%);
   color: #fff;
   border-radius: var(--radius-xl);
   padding: 3rem;

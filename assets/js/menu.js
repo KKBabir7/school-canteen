@@ -1,31 +1,44 @@
 /**
- * School Food Platform — Menu Builder
+ * MenuBuilder — menu-editor.html with bilingual fields.
  */
 (function (global, $) {
   'use strict';
 
   const MenuBuilder = {
     draft: null,
+    editId: null,
+    activeSectionId: null,
+    productMap: {},
 
-    initCreate() {
-      this.draft = {
-        id: AppState.uid('menu'),
-        name: '',
-        description: '',
-        status: 'draft',
-        availability: 'unavailable',
-        lastUpdated: new Date().toISOString(),
-        assignedCanteenIds: [],
-        availabilityDates: null,
-        sections: [
-          { id: AppState.uid('sec'), name: 'Main Meals', status: 'active', items: [] },
-          { id: AppState.uid('sec'), name: 'Drinks', status: 'active', items: [] },
-          { id: AppState.uid('sec'), name: 'Snacks', status: 'active', items: [] }
-        ]
-      };
+    async init() {
+      const products = await ProductService.getAll();
+      products.forEach((p) => { this.productMap[p.id] = p; });
+      this.editId = Components.getQueryParam('id');
+      if (this.editId) {
+        const menu = await MenuService.getById(this.editId);
+        if (!menu) {
+          window.location.href = 'menus.html';
+          return;
+        }
+        this.draft = Utils.clone(menu);
+        $('#pageMenuTitle').text(Utils.localized(menu.name));
+        $('#menuNameEn').val(menu.name?.en || '');
+        $('#menuNameAr').val(menu.name?.ar || '');
+        $('#menuDescEn').val(menu.description?.en || '');
+        $('#menuDescAr').val(menu.description?.ar || '');
+        $('#menuStatus').val(menu.status || 'draft');
+      } else {
+        this.draft = {
+          name: { en: '', ar: '' },
+          description: { en: '', ar: '' },
+          status: 'draft',
+          sections: []
+        };
+      }
 
       this.renderSections();
-      this.bindCreateForm();
+      this.bindForm();
+      this.bindAddSectionModal();
       this.bindAddItemModal();
       this.bindNewProductModal();
     },
@@ -34,299 +47,252 @@
       const $el = $('#menuSectionsBuilder');
       if (!$el.length || !this.draft) return;
 
+      if (!this.draft.sections.length) {
+        $el.html(`<p class="text-muted">${I18n.t('addSection')}</p>`);
+        return;
+      }
+
       $el.html(this.draft.sections.map((sec) => `
         <div class="section-block" data-section-id="${sec.id}" data-aos="fade-up">
           <div class="section-block-header">
             <h4>
-              <span class="section-name-display">${sec.name}</span>
-              <span class="translation-hint" title="Translation fields will be added in a later release">EN · +translations</span>
+              <span>${Utils.localized(sec.name)}</span>
+              <span class="translation-hint small text-muted">EN / AR</span>
             </h4>
             <div class="d-flex align-items-center gap-2">
-              ${Components.renderStatusBadge(sec.status)}
-              <button type="button" class="btn-app btn-ghost-app btn-sm-app btn-edit-section" data-id="${sec.id}" aria-label="Edit section">
-                <i class="bi bi-pencil" aria-hidden="true"></i>
+              ${Components.renderStatusBadge(sec.status || 'active')}
+              <button type="button" class="btn-app btn-ghost-app btn-sm-app btn-edit-section" data-id="${sec.id}">
+                <i class="bi bi-pencil"></i>
               </button>
-              <button type="button" class="btn-app btn-ghost-app btn-sm-app btn-delete-section" data-id="${sec.id}" aria-label="Delete section">
-                <i class="bi bi-trash" aria-hidden="true"></i>
+              <button type="button" class="btn-app btn-ghost-app btn-sm-app btn-delete-section" data-id="${sec.id}">
+                <i class="bi bi-trash"></i>
               </button>
             </div>
           </div>
           <div class="section-items">
-            ${(sec.items || []).map((item) => {
-              const product = AppState.getProduct(item.productId) || item._product;
-              if (!product) return '';
-              return `
-                <div class="menu-item-row" data-item-id="${item.id}">
-                  <img class="menu-item-img object-cover" src="${product.image}" alt="${product.name}" loading="lazy">
-                  <div class="menu-item-info">
-                    <strong>${product.name}</strong>
-                    <span>${product.description || ''}</span>
-                  </div>
-                  <div class="menu-item-price">${AppState.formatMoney(item.menuPrice)}</div>
-                  ${Components.renderStatusBadge(item.available !== false ? 'available' : 'unavailable')}
-                  <button type="button" class="btn-app btn-ghost-app btn-sm-app btn-remove-item" data-section="${sec.id}" data-item="${item.id}" aria-label="Remove item">
-                    <i class="bi bi-x-lg" aria-hidden="true"></i>
-                  </button>
-                </div>`;
-            }).join('') || '<div class="p-3 text-muted small">No items yet. Add products to this section.</div>'}
+            ${(sec.items || []).map((item) => this.renderBuilderItemSync(sec.id, item)).join('') ||
+              `<div class="p-3 text-muted small">${I18n.t('addItem')}</div>`}
           </div>
           <div class="p-3 border-top">
             <button type="button" class="btn-app btn-outline-app btn-sm-app btn-add-item" data-section="${sec.id}">
-              <i class="bi bi-plus-lg" aria-hidden="true"></i> Add Item
+              <i class="bi bi-plus-lg"></i> ${I18n.t('addItem')}
             </button>
           </div>
         </div>
       `).join(''));
+
+      $('.btn-add-item').on('click', (e) => {
+        this.activeSectionId = $(e.currentTarget).data('section');
+        bootstrap.Modal.getOrCreateInstance($('#addItemModal')[0]).show();
+      });
+
+      $('.btn-delete-section').on('click', async (e) => {
+        const id = $(e.currentTarget).data('id');
+        const ok = await Components.showConfirm({ title: I18n.t('delete'), danger: true });
+        if (ok) {
+          this.draft.sections = this.draft.sections.filter((s) => s.id !== id);
+          this.renderSections();
+        }
+      });
+
+      $('.btn-edit-section').on('click', (e) => {
+        const sec = this.draft.sections.find((s) => s.id === $(e.currentTarget).data('id'));
+        if (!sec) return;
+        $('#sectionNameEn').val(sec.name?.en || '');
+        $('#sectionNameAr').val(sec.name?.ar || '');
+        $('#addSectionModal').data('edit-id', sec.id);
+        bootstrap.Modal.getOrCreateInstance($('#addSectionModal')[0]).show();
+      });
+
+      $('.btn-remove-item').on('click', (e) => {
+        const secId = $(e.currentTarget).data('section');
+        const itemId = $(e.currentTarget).data('item');
+        const sec = this.draft.sections.find((s) => s.id === secId);
+        if (sec) sec.items = (sec.items || []).filter((i) => i.id !== itemId);
+        this.renderSections();
+      });
     },
 
-    bindCreateForm() {
-      $('#btnAddSection').on('click', async () => {
-        const { value: name } = await Swal.fire({
-          title: 'Add section',
-          input: 'text',
-          inputPlaceholder: 'Section name (e.g. Desserts)',
-          inputAttributes: { maxlength: 40 },
-          showCancelButton: true,
-          confirmButtonText: 'Add',
-          confirmButtonColor: '#0c7a6f',
-          inputValidator: (v) => !v && 'Please enter a section name'
+    renderBuilderItemSync(secId, item) {
+      const product = this.productMap[item.productId];
+      if (!product) return '';
+      return `
+        <div class="menu-item-row" data-item-id="${item.id}">
+          <img class="menu-item-img object-cover" src="${product.image}" alt="${Utils.localized(product.name)}" loading="lazy">
+          <div class="menu-item-info">
+            <strong>${Utils.localized(product.name)}</strong>
+            <span>${Utils.localized(product.description)}</span>
+          </div>
+          <div class="menu-item-price">${Utils.money(item.menuPrice)}</div>
+          <button type="button" class="btn-app btn-ghost-app btn-sm-app btn-remove-item" data-section="${secId}" data-item="${item.id}">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>`;
+    },
+
+    bindForm() {
+      $('#btnSaveMenu').on('click', () => this.save('draft'));
+      $('#btnPublishMenu').on('click', () => this.save('active'));
+    },
+
+    validateMenu() {
+      const nameEn = $('#menuNameEn').val().trim();
+      const nameAr = $('#menuNameAr').val().trim();
+      if (!nameEn || !nameAr) {
+        Components.showToast(I18n.t('required'), 'error');
+        return false;
+      }
+      if (!this.draft.sections.length) {
+        Components.showToast(I18n.t('addSection'), 'error');
+        return false;
+      }
+      for (const sec of this.draft.sections) {
+        if (!sec.name?.en || !sec.name?.ar) {
+          Components.showToast(I18n.t('sectionNameEn') + ' / ' + I18n.t('sectionNameAr'), 'error');
+          return false;
+        }
+      }
+      return true;
+    },
+
+    async save(status) {
+      if (!this.validateMenu()) return;
+
+      const payload = {
+        nameEn: $('#menuNameEn').val().trim(),
+        nameAr: $('#menuNameAr').val().trim(),
+        descEn: $('#menuDescEn').val().trim(),
+        descAr: $('#menuDescAr').val().trim(),
+        status: status,
+        sections: this.draft.sections
+      };
+
+      if (this.editId) {
+        await MenuService.update(this.editId, {
+          name: { en: payload.nameEn, ar: payload.nameAr },
+          description: { en: payload.descEn, ar: payload.descAr },
+          status: status,
+          availability: status === 'active' ? 'available' : 'unavailable',
+          sections: payload.sections
         });
-        if (!name) return;
-        this.draft.sections.push({
-          id: AppState.uid('sec'),
-          name: name.trim(),
-          status: 'active',
-          items: []
-        });
-        this.renderSections();
+      } else {
+        const created = await MenuService.create(payload);
+        this.editId = created.id;
+      }
+
+      Components.showSuccess(I18n.t('success'), status === 'active' ? I18n.t('activate') : I18n.t('draft'));
+      setTimeout(() => {
+        window.location.href = 'menus.html';
+      }, 800);
+    },
+
+    bindAddSectionModal() {
+      const $modal = $('#addSectionModal');
+      Forms.initSelect2InModal($modal);
+
+      $('#btnAddSection').on('click', () => {
+        $('#sectionNameEn, #sectionNameAr').val('');
+        $modal.removeData('edit-id');
+        bootstrap.Modal.getOrCreateInstance($modal[0]).show();
       });
 
-      $(document).on('click', '.btn-edit-section', async (e) => {
-        const id = $(e.currentTarget).data('id');
-        const sec = this.draft.sections.find((s) => s.id === id);
-        if (!sec) return;
-        const { value: name } = await Swal.fire({
-          title: 'Edit section',
-          input: 'text',
-          inputValue: sec.name,
-          showCancelButton: true,
-          confirmButtonColor: '#0c7a6f'
-        });
-        if (!name) return;
-        sec.name = name.trim();
-        this.renderSections();
-      });
-
-      $(document).on('click', '.btn-delete-section', async (e) => {
-        const id = $(e.currentTarget).data('id');
-        if (this.draft.sections.length <= 1) {
-          Components.showToast('Keep at least one section.', 'error');
+      $('#btnConfirmSection').on('click', () => {
+        const en = $('#sectionNameEn').val().trim();
+        const ar = $('#sectionNameAr').val().trim();
+        if (!en || !ar) {
+          Components.showToast(I18n.t('required'), 'error');
           return;
         }
-        const ok = await Components.showConfirm({
-          title: 'Delete section?',
-          text: 'Items in this section will also be removed.',
-          confirmText: 'Delete',
-          danger: true
-        });
-        if (!ok) return;
-        this.draft.sections = this.draft.sections.filter((s) => s.id !== id);
+        const editId = $modal.data('edit-id');
+        if (editId) {
+          const sec = this.draft.sections.find((s) => s.id === editId);
+          if (sec) sec.name = { en, ar };
+        } else {
+          this.draft.sections.push({
+            id: Utils.uid('sec'),
+            name: { en, ar },
+            status: 'active',
+            items: []
+          });
+        }
+        bootstrap.Modal.getInstance($modal[0]).hide();
         this.renderSections();
       });
-
-      $(document).on('click', '.btn-remove-item', (e) => {
-        const sectionId = $(e.currentTarget).data('section');
-        const itemId = $(e.currentTarget).data('item');
-        const sec = this.draft.sections.find((s) => s.id === sectionId);
-        if (!sec) return;
-        sec.items = sec.items.filter((i) => i.id !== itemId);
-        this.renderSections();
-      });
-
-      $(document).on('click', '.btn-add-item', (e) => {
-        this.currentSectionId = $(e.currentTarget).data('section');
-        this.openAddItemModal();
-      });
-
-      $('#btnSaveMenu').on('click', () => this.saveMenu(false));
-      $('#btnPublishMenu').on('click', () => this.saveMenu(true));
-    },
-
-    openAddItemModal() {
-      const $modal = $('#addItemModal');
-      const $product = $('#selectProduct');
-      $product.html('<option value=""></option>' +
-        AppState.data.products.map((p) => `<option value="${p.id}">${p.name} — ${AppState.formatMoney(p.price)}</option>`).join(''));
-
-      $('#selectedProductPreview').hide();
-      $('#addItemPrice').val('');
-      $('#addItemAvailable').prop('checked', true);
-
-      const modal = bootstrap.Modal.getOrCreateInstance($modal[0]);
-      modal.show();
     },
 
     bindAddItemModal() {
       const $modal = $('#addItemModal');
-      if (!$modal.length) return;
       Forms.initSelect2InModal($modal);
 
-      $('#selectProduct').on('change', function () {
-        const id = $(this).val();
-        const product = AppState.getProduct(id);
-        const $preview = $('#selectedProductPreview');
-        if (!product) {
-          $preview.hide();
-          return;
-        }
-        $('#previewImg').attr('src', product.image).attr('alt', product.name);
-        $('#previewName').text(product.name);
-        $('#previewDesc').text(product.description || '');
-        $('#previewPrice').text(AppState.formatMoney(product.price));
-        $('#previewAvail').html(Components.renderStatusBadge(product.available ? 'available' : 'unavailable'));
-        $('#addItemPrice').val(product.price);
-        $preview.show();
-      });
-
-      $('#btnAddToMenu').on('click', () => {
-        const productId = $('#selectProduct').val();
-        const price = parseFloat($('#addItemPrice').val());
-        if (!productId) {
-          Components.showToast('Please select a product.', 'error');
-          return;
-        }
-        if (isNaN(price) || price < 0) {
-          Components.showToast('Please enter a valid menu price.', 'error');
-          return;
-        }
-
-        const sec = this.draft.sections.find((s) => s.id === this.currentSectionId);
-        if (!sec) return;
-
-        sec.items.push({
-          id: AppState.uid('mi'),
-          productId: productId,
-          menuPrice: price,
-          available: $('#addItemAvailable').is(':checked')
+      $modal.on('shown.bs.modal', async () => {
+        const products = await ProductService.getAll();
+        const $sel = $('#itemProductSelect');
+        if ($sel.hasClass('select2-hidden-accessible')) $sel.select2('destroy');
+        $sel.empty().append('<option value=""></option>');
+        products.forEach((p) => {
+          $sel.append(`<option value="${p.id}" data-price="${p.price}">${Utils.localized(p.name)}</option>`);
+        });
+        Components.initializeSelect2($sel, {
+          dropdownParent: $modal,
+          placeholder: I18n.t('searchProducts'),
+          allowClear: true
         });
 
+        $sel.off('change').on('change', function () {
+          const price = $(this).find(':selected').data('price');
+          if (price) $('#itemMenuPrice').val(price);
+        });
+      });
+
+      $('#btnConfirmItem').on('click', () => {
+        const productId = $('#itemProductSelect').val();
+        const price = Number($('#itemMenuPrice').val());
+        if (!productId || !this.activeSectionId) {
+          Components.showToast(I18n.t('required'), 'error');
+          return;
+        }
+        const sec = this.draft.sections.find((s) => s.id === this.activeSectionId);
+        if (!sec) return;
+        sec.items = sec.items || [];
+        sec.items.push({
+          id: Utils.uid('mi'),
+          productId: productId,
+          menuPrice: price || 0,
+          available: true
+        });
         bootstrap.Modal.getInstance($modal[0]).hide();
-        Components.showToast('Item added to menu.', 'success');
         this.renderSections();
       });
 
-      $('#btnOpenNewProduct').on('click', () => {
-        bootstrap.Modal.getInstance($modal[0]).hide();
-        setTimeout(() => {
-          bootstrap.Modal.getOrCreateInstance($('#newProductModal')[0]).show();
-        }, 300);
+      $('#btnShowCreateProduct').on('click', () => {
+        bootstrap.Modal.getOrCreateInstance($('#newProductModal')[0]).show();
       });
     },
 
     bindNewProductModal() {
       const $modal = $('#newProductModal');
-      if (!$modal.length) return;
+      Forms.initSelect2InModal($modal);
 
-      Forms.bindImagePreview(
-        $('#productImage'),
-        $('#productImagePreview'),
-        $('#productImagePlaceholder')
-      );
-
-      $('#btnSaveProduct').on('click', () => {
-        const $form = $('#newProductForm');
-        if (!Forms.validateRequired($form)) return;
-
-        const price = parseFloat($('#productPrice').val());
-        if (isNaN(price) || price < 0) {
-          Components.showToast('Enter a valid price.', 'error');
+      $('#btnSaveProduct').on('click', async () => {
+        const en = $('#productNameEn').val().trim();
+        const ar = $('#productNameAr').val().trim();
+        if (!en || !ar) {
+          Components.showToast(I18n.t('required'), 'error');
           return;
         }
-
-        const imageSrc = $('#productImagePreview').hasClass('show')
-          ? $('#productImagePreview').attr('src')
-          : SchoolFoodMock.images.burger;
-
-        const product = {
-          id: AppState.uid('prd'),
-          name: $('#productName').val().trim(),
-          description: $('#productDesc').val().trim(),
-          price: price,
-          image: imageSrc,
-          available: $('#productAvailable').is(':checked'),
-          category: 'Main Meals'
-        };
-
-        AppState.data.products.push(product);
-
-        const sec = this.draft.sections.find((s) => s.id === this.currentSectionId) || this.draft.sections[0];
-        sec.items.push({
-          id: AppState.uid('mi'),
-          productId: product.id,
-          menuPrice: price,
-          available: product.available,
-          _product: product
+        const product = await ProductService.create({
+          nameEn: en,
+          nameAr: ar,
+          descEn: $('#productDescEn').val().trim(),
+          descAr: $('#productDescAr').val().trim(),
+          price: Number($('#productPrice').val()) || 0
         });
-
-        AppState.persist();
         bootstrap.Modal.getInstance($modal[0]).hide();
-        Forms.resetForm($form);
-        $('#productAvailable').prop('checked', true);
-        Components.showToast(`"${product.name}" created and added to menu.`, 'success');
-        this.renderSections();
-      });
-    },
-
-    saveMenu(publish) {
-      const name = $('#menuName').val().trim();
-      if (!name) {
-        Components.showToast('Menu name is required.', 'error');
-        $('#menuName').addClass('is-invalid').focus();
-        return;
-      }
-
-      const totalItems = this.draft.sections.reduce((s, sec) => s + sec.items.length, 0);
-      if (totalItems === 0) {
-        Components.showToast('Add at least one item before saving.', 'error');
-        return;
-      }
-
-      this.draft.name = name;
-      this.draft.description = $('#menuDescription').val().trim();
-      this.draft.status = publish ? 'active' : ($('#menuStatus').val() || 'draft');
-      if (publish) {
-        this.draft.status = 'active';
-        this.draft.availability = 'available';
-      }
-      this.draft.lastUpdated = new Date().toISOString();
-
-      // Clean temp _product
-      this.draft.sections.forEach((sec) => {
-        sec.items.forEach((item) => { delete item._product; });
-      });
-
-      AppState.data.menus.unshift(deepClone(this.draft));
-      AppState.data.activity.unshift({
-        id: AppState.uid('act'),
-        text: publish
-          ? `Menu "${this.draft.name}" created and activated`
-          : `Menu "${this.draft.name}" saved as ${this.draft.status}`,
-        time: new Date().toISOString()
-      });
-      AppState.persist();
-
-      Components.showSuccess(
-        publish ? 'Menu published' : 'Menu saved',
-        `"${this.draft.name}" is ready. You can assign it to canteens next.`
-      ).then(() => {
-        window.location.href = 'menu-details.html?id=' + this.draft.id;
+        $('#itemProductSelect').append(`<option value="${product.id}" data-price="${product.price}">${Utils.localized(product.name)}</option>`).val(product.id).trigger('change');
+        Components.showToast(I18n.t('success'), 'success');
       });
     }
   };
-
-  function deepClone(obj) {
-    return JSON.parse(JSON.stringify(obj));
-  }
 
   global.MenuBuilder = MenuBuilder;
 })(window, jQuery);

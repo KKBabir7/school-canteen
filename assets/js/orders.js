@@ -1,5 +1,5 @@
 /**
- * School Food Platform — Orders Logic
+ * Orders page + details via OrderService.
  */
 (function (global, $) {
   'use strict';
@@ -14,9 +14,12 @@
       this.bindOrdersPage();
     },
 
-    getFilteredOrders() {
-      const canteenId = SchoolFoodMock.users.canteenManager.canteenId;
-      let list = AppState.data.orders.filter((o) => o.canteenId === canteenId);
+    getCanteenId() {
+      return APP_CONFIG.roles.canteenManager.canteenId;
+    },
+
+    async getFilteredOrders() {
+      let list = await OrderService.getAll(this.getCanteenId());
 
       if (this.currentTab === 'history') {
         list = list.filter((o) => o.status === 'completed' || o.status === 'cancelled');
@@ -27,13 +30,15 @@
       const q = ($('#searchOrders').val() || '').toLowerCase().trim();
       if (q) {
         list = list.filter((o) =>
-          o.orderNumber.includes(q) ||
-          o.studentName.toLowerCase().includes(q) ||
-          o.className.toLowerCase().includes(q)
+          (o.orderNumber || '').toLowerCase().includes(q) ||
+          (o.studentName || '').toLowerCase().includes(q) ||
+          (o.classroom || o.className || '').toLowerCase().includes(q)
         );
       }
 
       list.sort((a, b) => {
+        if (this.sortBy === 'highest') return (b.total || 0) - (a.total || 0);
+        if (this.sortBy === 'lowest') return (a.total || 0) - (b.total || 0);
         const ta = new Date(a.orderTime).getTime();
         const tb = new Date(b.orderTime).getTime();
         return this.sortBy === 'oldest' ? ta - tb : tb - ta;
@@ -42,45 +47,37 @@
       return list;
     },
 
-    updateTabCounts() {
-      const canteenId = SchoolFoodMock.users.canteenManager.canteenId;
-      const orders = AppState.data.orders.filter((o) => o.canteenId === canteenId);
-      const counts = {
-        new: 0,
-        preparing: 0,
-        ready: 0,
-        upcoming: 0,
-        history: 0
-      };
+    async updateTabCounts() {
+      const orders = await OrderService.getAll(this.getCanteenId());
+      const counts = { new: 0, preparing: 0, ready: 0, upcoming: 0, history: 0 };
       orders.forEach((o) => {
         if (o.status === 'completed' || o.status === 'cancelled') counts.history++;
         else if (counts[o.status] !== undefined) counts[o.status]++;
       });
-
       Object.keys(counts).forEach((key) => {
         $(`#count-${key}`).text(counts[key]);
       });
     },
 
-    renderOrders() {
-      this.updateTabCounts();
-      const list = this.getFilteredOrders();
+    async renderOrders() {
+      await this.updateTabCounts();
+      const list = await this.getFilteredOrders();
       const $list = $('#ordersList');
       const $empty = $('#ordersEmpty');
 
       if (!list.length) {
         $list.hide();
         const labels = {
-          new: 'No new orders',
-          preparing: 'Nothing preparing',
-          ready: 'No orders ready',
-          upcoming: 'No upcoming orders',
-          history: 'No order history yet'
+          new: I18n.t('newOrders'),
+          preparing: I18n.t('preparing'),
+          ready: I18n.t('ready'),
+          upcoming: I18n.t('upcoming'),
+          history: I18n.t('history')
         };
         $empty.show().html(Components.renderEmptyState(
           'bi-bag',
-          labels[this.currentTab] || 'No orders',
-          'Orders will appear here as students place them.'
+          labels[this.currentTab] || I18n.t('noOrders'),
+          ''
         ));
         return;
       }
@@ -92,164 +89,102 @@
     bindOrdersPage() {
       $('.order-tabs .tab-btn').on('click', (e) => {
         this.currentTab = $(e.currentTarget).data('tab');
-        Components.setActiveTab(this.currentTab);
-        // custom panels not used — list is shared
-        $('.order-tabs .tab-btn').removeClass('active');
-        $(e.currentTarget).addClass('active');
+        $('.order-tabs .tab-btn').removeClass('active').attr('aria-selected', 'false');
+        $(e.currentTarget).addClass('active').attr('aria-selected', 'true');
         this.renderOrders();
       });
 
-      $('#searchOrders').on('input', () => this.renderOrders());
+      $('#searchOrders').on('input', Utils.debounce(() => this.renderOrders(), 250));
 
-      const $sort = $('#sortOrders');
-      if ($sort.length) {
-        Components.initializeSelect2($sort, { minimumResultsForSearch: Infinity });
-        $sort.on('change', () => {
-          this.sortBy = $sort.val() || 'newest';
-          this.renderOrders();
-        });
-      }
-
-      $(document).on('click', '.order-card', function (e) {
-        if ($(e.target).closest('.btn-order-action, .order-actions').length &&
-            !$(e.target).closest('.btn-view-order').length) {
-          return;
-        }
-        const id = $(this).data('id');
-        if (id) window.location.href = 'order-details.html?id=' + id;
+      $('#sortOrders').on('change', () => {
+        this.sortBy = $('#sortOrders').val();
+        this.renderOrders();
       });
 
-      $(document).on('click', '.btn-view-order', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        const id = $(this).data('id');
+      $(document).on('click', '.btn-view-order, .order-card', function (e) {
+        if ($(e.target).closest('.btn-order-action, .action-menu').length) return;
+        const id = $(this).data('id') || $(this).closest('.order-card').data('id');
         if (id) window.location.href = 'order-details.html?id=' + id;
       });
 
       $(document).on('click', '.btn-order-action', async function (e) {
-        e.preventDefault();
         e.stopPropagation();
         const id = $(this).data('id');
         const action = $(this).data('action');
-        await Orders.transitionOrder(id, action);
+        const map = { start: 'preparing', ready: 'ready', complete: 'completed' };
+        if (action === 'start') await OrderService.updateOrderStatus(id, 'preparing');
+        else if (action === 'ready') await OrderService.updateOrderStatus(id, 'ready');
+        else if (action === 'complete') await OrderService.updateOrderStatus(id, 'completed');
+        Components.showToast(I18n.t('success'), 'success');
         Orders.renderOrders();
       });
     },
 
-    async transitionOrder(id, action) {
-      const order = AppState.getOrder(id);
-      if (!order) return false;
-
-      const map = {
-        start: { from: 'new', to: 'preparing', title: 'Start preparing?', text: `Order #${order.orderNumber} will move to Preparing.`, confirm: 'Start Preparing' },
-        ready: { from: 'preparing', to: 'ready', title: 'Mark as ready?', text: `Order #${order.orderNumber} is ready for pickup.`, confirm: 'Mark Ready' },
-        complete: { from: 'ready', to: 'completed', title: 'Mark completed?', text: `Confirm that order #${order.orderNumber} has been picked up.`, confirm: 'Mark Completed' }
-      };
-
-      const step = map[action];
-      if (!step || order.status !== step.from) return false;
-
-      const ok = await Components.showConfirm({
-        title: step.title,
-        text: step.text,
-        confirmText: step.confirm,
-        icon: 'question'
-      });
-      if (!ok) return false;
-
-      order.status = step.to;
-      AppState.persist();
-      Components.showToast(`Order #${order.orderNumber} is now ${step.to}.`, 'success');
-      return true;
-    },
-
-    updateOrderStatus(id, status) {
-      const order = AppState.getOrder(id);
-      if (!order) return false;
-      order.status = status;
-      AppState.persist();
-      return true;
-    },
-
-    initOrderDetails() {
-      const id = Components.getQueryParam('id') || 'ord-1';
-      let order = AppState.getOrder(id) || AppState.getOrderByNumber(id);
-      if (!order) {
-        $('#orderDetailRoot').html(Components.renderEmptyState('bi-bag', 'Order not found', 'This order does not exist.',
-          '<a href="orders.html" class="btn-app btn-primary-app">Back to Orders</a>'));
+    async initOrderDetails() {
+      const id = Components.getQueryParam('id');
+      if (!id) {
+        window.location.href = 'orders.html';
         return;
       }
 
-      this.renderOrderDetail(order);
-    },
-
-    renderOrderDetail(order) {
-      $('#orderNumber').text('#' + order.orderNumber);
-      $('#orderStudent').text(order.studentName);
-      $('#orderClass').text(order.className);
-      $('#orderTime').text(AppState.formatTime(order.orderTime));
-      $('#orderStatusBadge').html(Components.renderStatusBadge(order.status));
-      $('#orderStepper').html(Components.renderStatusStepper(order.status));
-
-      const itemsHtml = (order.items || []).map((item) => `
-        <div class="d-flex justify-content-between align-items-center py-3 border-bottom">
-          <div>
-            <strong>${item.name}</strong>
-            <span class="text-muted"> × ${item.qty}</span>
-          </div>
-          <div class="fw-600">${AppState.formatMoney(item.price * item.qty)}</div>
-        </div>
-      `).join('');
-
-      $('#orderItems').html(itemsHtml);
-      $('#orderTotal').text(AppState.formatMoney(order.total));
-
-      // Print view
-      $('#printOrderNumber').text('#' + order.orderNumber);
-      $('#printStudent').text(order.studentName);
-      $('#printClass').text('Grade ' + order.className);
-      $('#printTime').text(AppState.formatTime(order.orderTime));
-      $('#printItems').html((order.items || []).map((item) =>
-        `<tr><td>${item.name}</td><td>${item.qty}</td><td>${AppState.formatMoney(item.price * item.qty)}</td></tr>`
-      ).join(''));
-      $('#printTotal').text(AppState.formatMoney(order.total));
-
-      this.renderPrimaryAction(order);
-
-      $('#btnPrintOrder').off('click').on('click', () => window.print());
-    },
-
-    renderPrimaryAction(order) {
-      const $wrap = $('#orderPrimaryAction');
-      let html = '';
-
-      if (order.status === 'new') {
-        html = `<button type="button" class="btn-app btn-primary-app btn-lg-app" id="btnStatusAction" data-action="start">
-          <i class="bi bi-play-fill" aria-hidden="true"></i> Start Preparing</button>`;
-      } else if (order.status === 'preparing') {
-        html = `<button type="button" class="btn-app btn-primary-app btn-lg-app" id="btnStatusAction" data-action="ready">
-          <i class="bi bi-check2" aria-hidden="true"></i> Mark Ready</button>`;
-      } else if (order.status === 'ready') {
-        html = `<button type="button" class="btn-app btn-primary-app btn-lg-app" id="btnStatusAction" data-action="complete">
-          <i class="bi bi-check2-all" aria-hidden="true"></i> Mark Completed</button>`;
-      } else {
-        html = `<span class="text-muted">This order is ${order.status}.</span>`;
+      const order = await OrderService.getById(id);
+      if (!order) {
+        window.location.href = 'orders.html';
+        return;
       }
 
-      $wrap.html(html);
-      $('#btnStatusAction').on('click', async function () {
-        const action = $(this).data('action');
-        const ok = await Orders.transitionOrder(order.id, action);
-        if (ok) {
-          const updated = AppState.getOrder(order.id);
-          Orders.renderOrderDetail(updated);
-        }
+      $('#odNumber').text('#' + order.orderNumber);
+      $('#odStudent').text(order.studentName);
+      $('#odClassroom').text(order.classroom || order.className || '—');
+      $('#odTime').text(Utils.formatTime(order.orderTime) + ' · ' + Utils.formatDate(order.orderTime));
+      $('#odTotal').text(Utils.money(order.total));
+      $('#odStatus').html(Components.renderStatusBadge(order.status));
+      $('#odStepper').html(Components.renderStatusStepper(order.status));
+
+      $('#odItems').html((order.items || []).map((item) => `
+        <div class="order-line-item">
+          <img src="${item.image || ''}" alt="" class="order-line-img object-cover" loading="lazy">
+          <div class="flex-grow-1">
+            <strong>${Utils.localized(item.name) || item.name}</strong>
+            <span class="text-muted">× ${item.qty || 1}</span>
+          </div>
+          <span>${Utils.money((item.price || 0) * (item.qty || 1))}</span>
+        </div>
+      `).join(''));
+
+      this.renderDetailActions(order);
+
+      if ($('#printOrderNumber').length) {
+        $('#printOrderNumber').text('#' + order.orderNumber);
+        $('#printStudent').text(order.studentName);
+        $('#printClass').text(order.classroom || order.className || '—');
+        $('#printTime').text(Utils.formatTime(order.orderTime));
+        $('#printTotal').text(Utils.money(order.total));
+        $('#printItems').html($('#odItems').html());
+      }
+
+      $('#btnPrintOrder').on('click', () => window.print());
+    },
+
+    renderDetailActions(order) {
+      const $actions = $('#odActions');
+      $actions.empty();
+
+      if (order.status === 'new') {
+        $actions.append(`<button type="button" class="btn-app btn-primary-app" id="btnAdvanceOrder">${I18n.t('startPreparing')}</button>`);
+      } else if (order.status === 'preparing') {
+        $actions.append(`<button type="button" class="btn-app btn-primary-app" id="btnAdvanceOrder">${I18n.t('markReady')}</button>`);
+      } else if (order.status === 'ready') {
+        $actions.append(`<button type="button" class="btn-app btn-primary-app" id="btnAdvanceOrder">${I18n.t('completeOrder')}</button>`);
+      }
+
+      $('#btnAdvanceOrder').on('click', async () => {
+        await OrderService.advanceStatus(order.id);
+        Components.showSuccess(I18n.t('success'), '');
+        Orders.initOrderDetails();
       });
     }
   };
 
   global.Orders = Orders;
-  global.updateOrderStatus = function (id, status) {
-    return Orders.updateOrderStatus(id, status);
-  };
 })(window, jQuery);

@@ -1,135 +1,127 @@
 /**
- * School Food Platform — App Core & State
+ * App bootstrap — init i18n, seed data, PWA install UI.
  */
-(function (global) {
+(function (global, $) {
   'use strict';
 
-  const STORAGE_KEY = 'schoolFoodMVP';
-
-  function deepClone(obj) {
-    return JSON.parse(JSON.stringify(obj));
-  }
-
-  function getDefaultState() {
-    const mock = global.SchoolFoodMock;
-    return {
-      canteens: deepClone(mock.canteens),
-      menus: deepClone(mock.menus),
-      products: deepClone(mock.products),
-      orders: deepClone(mock.orders),
-      activity: deepClone(mock.activity),
-      settings: deepClone(mock.settings),
-      schools: deepClone(mock.schools)
-    };
-  }
-
-  const AppState = {
-    data: null,
-
+  const App = {
     init() {
-      try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (parsed && parsed.canteens && parsed.menus) {
-            this.data = parsed;
-            return;
+      // Migrate away from v1 storage key if needed
+      if (!Storage.get('canteens') && localStorage.getItem('schoolFoodMVP')) {
+        try {
+          Storage.clearAll();
+        } catch (e) { /* ignore */ }
+      }
+
+      // Ensure seed collections exist (when services are loaded)
+      if (typeof SchoolFoodSeed !== 'undefined') {
+        const keys = [
+          ['canteens', 'canteens'],
+          ['menus', 'menus'],
+          ['products', 'products'],
+          ['orders', 'orders'],
+          ['settings', 'settings'],
+          ['schools', 'schools'],
+          ['grades', 'grades'],
+          ['classes', 'classes'],
+          ['breaks', 'breaks'],
+          ['children', 'children'],
+          ['wallets', 'wallets'],
+          ['paymentMethods', 'paymentMethods'],
+          ['discounts', 'discounts']
+        ];
+        keys.forEach(([storageKey, seedKey]) => {
+          if (!Storage.get(storageKey) && SchoolFoodSeed[seedKey] !== undefined) {
+            Storage.set(storageKey, Utils.clone(SchoolFoodSeed[seedKey]));
           }
+        });
+        // discounts seed lives in DiscountService if not on SchoolFoodSeed
+        if (!Storage.get('discounts') && typeof DiscountService !== 'undefined') {
+          DiscountService.getAll();
         }
-      } catch (e) {
-        console.warn('Could not load saved state', e);
       }
-      this.data = getDefaultState();
-      this.persist();
+
+      if (typeof I18n !== 'undefined') I18n.init();
+      this.bindLandingLang();
+      this.initPwa();
     },
 
-    persist() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data));
-      } catch (e) {
-        console.warn('Could not persist state', e);
+    bindLandingLang() {
+      $('.lang-switcher button').on('click', function () {
+        const lang = $(this).data('lang');
+        I18n.setLang(lang);
+        $('.lang-switcher button').removeClass('active');
+        $(this).addClass('active');
+      });
+      // sync active button
+      $('.lang-switcher button').removeClass('active');
+      $(`.lang-switcher button[data-lang="${I18n.lang}"]`).addClass('active');
+    },
+
+    resetDemo() {
+      Storage.clearAll();
+      localStorage.removeItem('schoolFoodMVP');
+      window.location.reload();
+    },
+
+    initPwa() {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register(this.swPath()).catch(() => {});
+      }
+
+      let deferred;
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferred = e;
+        this.showInstallBanner(deferred);
+      });
+
+      // iOS / already-installed: soft tip once
+      const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+      const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+      if (isIos && !standalone && !Storage.get('pwaDismissed')) {
+        setTimeout(() => this.showInstallBanner(null, true), 1800);
       }
     },
 
-    reset() {
-      this.data = getDefaultState();
-      this.persist();
+    swPath() {
+      const path = location.pathname.replace(/\\/g, '/');
+      const nested = ['food-provider', 'canteen-manager', 'parent', 'student', 'school-admin', 'super-admin'];
+      if (nested.some((f) => path.includes('/' + f + '/'))) return '../sw.js';
+      return 'sw.js';
     },
 
-    getSchool(id) {
-      return this.data.schools.find((s) => s.id === id) || null;
-    },
-
-    getCanteen(id) {
-      return this.data.canteens.find((c) => c.id === id) || null;
-    },
-
-    getMenu(id) {
-      return this.data.menus.find((m) => m.id === id) || null;
-    },
-
-    getProduct(id) {
-      return this.data.products.find((p) => p.id === id) || null;
-    },
-
-    getOrder(id) {
-      return this.data.orders.find((o) => o.id === id) || null;
-    },
-
-    getOrderByNumber(num) {
-      return this.data.orders.find((o) => o.orderNumber === String(num)) || null;
-    },
-
-    uid(prefix) {
-      return prefix + '-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-    },
-
-    formatMoney(amount) {
-      const cur = global.SchoolFoodMock.currency || '₪';
-      return cur + Number(amount).toFixed(0);
-    },
-
-    formatTime(iso) {
-      if (!iso) return '—';
-      const d = new Date(iso);
-      return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-    },
-
-    formatDate(iso) {
-      if (!iso) return '—';
-      const d = new Date(iso);
-      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    },
-
-    formatRelative(iso) {
-      if (!iso) return '—';
-      const d = new Date(iso);
-      const now = new Date();
-      const diff = (now - d) / 1000;
-      if (diff < 60) return 'Just now';
-      if (diff < 3600) return Math.floor(diff / 60) + ' min ago';
-      if (diff < 86400) return Math.floor(diff / 3600) + ' hours ago';
-      if (diff < 172800) return 'Yesterday';
-      return this.formatDate(iso);
-    },
-
-    greeting() {
-      const h = new Date().getHours();
-      if (h < 12) return 'Good morning';
-      if (h < 17) return 'Good afternoon';
-      return 'Good evening';
-    },
-
-    countMenuItems(menu) {
-      if (!menu || !menu.sections) return 0;
-      return menu.sections.reduce((sum, s) => sum + (s.items ? s.items.length : 0), 0);
-    },
-
-    countSections(menu) {
-      return menu && menu.sections ? menu.sections.length : 0;
+    showInstallBanner(deferred, iosTip) {
+      if ($('#pwaInstallBanner').length) return;
+      const $banner = $(`
+        <div class="pwa-install-banner show" id="pwaInstallBanner" role="dialog" aria-label="Install">
+          <div class="pwa-icon" aria-hidden="true"><i class="bi bi-phone"></i></div>
+          <div class="pwa-text">
+            <strong data-i18n="installApp">${t('installApp')}</strong>
+            <p data-i18n="installAppText">${iosTip ? 'Share → Add to Home Screen' : t('installAppText')}</p>
+          </div>
+          <div class="d-flex gap-1 flex-shrink-0">
+            <button type="button" class="btn-app btn-ghost-app btn-sm-app" id="pwaDismiss">${t('dismiss')}</button>
+            ${deferred ? `<button type="button" class="btn-app btn-primary-app btn-sm-app" id="pwaInstall">${t('install')}</button>` : ''}
+          </div>
+        </div>`);
+      $('body').append($banner);
+      $('#pwaDismiss').on('click', () => {
+        Storage.set('pwaDismissed', true);
+        $banner.remove();
+      });
+      $('#pwaInstall').on('click', async () => {
+        if (!deferred) return;
+        deferred.prompt();
+        await deferred.userChoice;
+        $banner.remove();
+      });
     }
   };
 
-  AppState.init();
-  global.AppState = AppState;
-})(window);
+  global.App = App;
+
+  $(function () {
+    App.init();
+  });
+})(window, jQuery);

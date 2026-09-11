@@ -1,0 +1,18 @@
+{
+  "name": "SchoolFood",
+  "short_name": "SchoolFood",
+  "description": "School canteen pre-ordering for food providers and canteen managers",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#1a365d",
+  "theme_color": "#1a365d",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/images/logo/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

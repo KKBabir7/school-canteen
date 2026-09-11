@@ -43,7 +43,7 @@
   background: var(--primary-hover);
   border-color: var(--primary-hover);
   color: #fff;
-  box-shadow: 0 4px 12px rgba(12, 122, 111, 0.25);
+  box-shadow: 0 4px 12px rgba(26, 54, 93, 0.25);
 }
 
 .btn-secondary-app {

@@ -1,14 +1,41 @@
-# SchoolFood — Validation MVP
+# SchoolFood — Frontend Prototype
 
-Interactive frontend prototype for a **school canteen food pre-ordering** platform.
+School canteen food pre-ordering platform (HTML/CSS/JS/jQuery + Bootstrap).
 
-This is **not** the full product. It validates the core workflows with schools using two roles only:
+## Roles (all demoable)
 
-1. **Food Provider Admin** — manage canteens, create menus, assign menus  
-2. **Canteen Manager** — run daily menu availability and the order floor  
+| Role | Entry |
+|------|--------|
+| **Parent** (most polished ordering UX) | `parent/home.html` |
+| **Student** | `student/home.html` |
+| **Food Provider** | `food-provider/dashboard.html` |
+| **Canteen Manager** | `canteen-manager/dashboard.html` |
+| **School Admin** | `school-admin/dashboard.html` |
+| **Super Admin** | `super-admin/schools.html` |
 
-Parent, Student, School Admin, and Super Admin are intentionally out of scope.
+Use the top-bar **role switcher** or the landing page links. Language: **EN | العربية** (RTL).
 
-- All data is mock / client-side.  
-- Designed as a polished clickable prototype for school validation meetings.  
-- Later phases may add parent/student wallets, payments, allergens, reporting, etc.
+## Run
+
+```bash
+python -m http.server 8080
+```
+
+Open `http://localhost:8080` — prefer a local server (not `file://`) for PWA/service worker.
+
+## Architecture
+
+- **Services** (`assets/js/services/`) — mock now; swap to Java/Spring Boot when `APP_CONFIG.mode = 'api'`
+- **Storage** — `localStorage` prefix `schoolFood_v3_`
+- **I18n** — curated EN/AR UI + bilingual `{ en, ar }` content fields
+- **PWA** — `manifest.webmanifest` + `sw.js`
+
+Reset demo data from the user menu anytime (clears LocalStorage seed).
+
+## Intentionally later (per requirements)
+
+Real payments, allergens/nutrition, QR activation, Parent/Student cancel-order rules polish, Java backend, WebSockets.
+
+## Tech
+
+HTML5, CSS3, JavaScript, jQuery, Bootstrap 5, Select2, AOS, SweetAlert2, Flatpickr, CountUp (CDN). No React/Vue/build step.

@@ -1,0 +1,6 @@
+.DS_Store
+Thumbs.db
+_req_extract/
+_req_extract2/
+*.zip
+node_modules/

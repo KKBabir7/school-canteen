@@ -1,70 +1,82 @@
 /**
- * School Food Platform — Canteen Manager Logic
+ * Canteen Manager — dashboard, my-menu, settings via services.
  */
 (function (global, $) {
   'use strict';
 
   const CanteenManager = {
     getCanteenId() {
-      return SchoolFoodMock.users.canteenManager.canteenId;
+      return APP_CONFIG.roles.canteenManager.canteenId;
     },
 
-    initDashboard() {
+    async initDashboard() {
       const canteenId = this.getCanteenId();
-      const orders = AppState.data.orders.filter((o) => o.canteenId === canteenId);
+      const user = APP_CONFIG.roles.canteenManager;
+      $('#cmWelcome').text(`${Utils.greeting()}, ${user.name.split(' ')[0]} 👋`);
 
-      const counts = {
-        new: orders.filter((o) => o.status === 'new').length,
-        preparing: orders.filter((o) => o.status === 'preparing').length,
-        ready: orders.filter((o) => o.status === 'ready').length,
-        today: orders.filter((o) => o.status !== 'upcoming').length
-      };
-
+      const counts = await OrderService.getCounts(canteenId);
+      Components.animateCountUp('#statTodayOrders', counts.today);
       Components.animateCountUp('#statNewOrders', counts.new);
       Components.animateCountUp('#statPreparing', counts.preparing);
       Components.animateCountUp('#statReady', counts.ready);
-      Components.animateCountUp('#statTodayOrders', counts.today);
+      Components.animateCountUp('#statRevenue', counts.revenue);
+      if ($('#statAvailableItems').length) {
+        const avail = await this.countAvailableItems();
+        Components.animateCountUp('#statAvailableItems', avail);
+      }
 
-      this.renderTodayMenu();
-      this.renderTodayOrdersSummary(orders);
+      await this.renderTodayMenu();
+      await this.renderRecentOrders();
     },
 
-    renderTodayMenu() {
-      const canteen = AppState.getCanteen(this.getCanteenId());
-      const $el = $('#todayMenuGrid');
-      if (!$el.length || !canteen) return;
-
-      const menuIds = canteen.assignedMenuIds || [];
-      const items = [];
-
-      menuIds.forEach((mid) => {
-        const menu = AppState.getMenu(mid);
-        if (!menu || menu.status !== 'active') return;
+    async countAvailableItems() {
+      const menus = await MenuService.getForCanteen(this.getCanteenId());
+      let n = 0;
+      menus.forEach((menu) => {
+        if (menu.status !== 'active') return;
         (menu.sections || []).forEach((sec) => {
           (sec.items || []).forEach((item) => {
-            const product = AppState.getProduct(item.productId);
-            if (product) {
-              items.push({ item, product, menuId: mid });
-            }
+            if (item.available !== false) n++;
+          });
+        });
+      });
+      return n;
+    },
+
+    async renderTodayMenu() {
+      const $el = $('#todayMenuGrid');
+      if (!$el.length) return;
+
+      const menus = await MenuService.getForCanteen(this.getCanteenId());
+      const products = await ProductService.getAll();
+      const productMap = {};
+      products.forEach((p) => { productMap[p.id] = p; });
+
+      const items = [];
+      menus.filter((m) => m.status === 'active').forEach((menu) => {
+        (menu.sections || []).forEach((sec) => {
+          (sec.items || []).forEach((item) => {
+            const product = productMap[item.productId];
+            if (product) items.push({ item, product, menuId: menu.id });
           });
         });
       });
 
       const featured = items.slice(0, 4);
       if (!featured.length) {
-        $el.html(Components.renderEmptyState('bi-egg-fried', 'No menu today', 'Ask your food provider to assign a menu.'));
+        $el.html(Components.renderEmptyState('bi-egg-fried', I18n.t('todayMenu'), I18n.t('myMenusDesc')));
         return;
       }
 
       $el.html(featured.map(({ item, product }) => `
         <div class="food-card" data-aos="fade-up">
           <div class="food-card-img">
-            <img src="${product.image}" alt="${product.name}" class="object-cover" loading="lazy">
+            <img src="${product.image}" alt="${Utils.localized(product.name)}" class="object-cover" loading="lazy">
           </div>
           <div class="food-card-body">
-            <h4>${product.name}</h4>
+            <h4>${Utils.localized(product.name)}</h4>
             <div class="food-card-footer">
-              <span class="food-card-price">${AppState.formatMoney(item.menuPrice)}</span>
+              <span class="food-card-price">${Utils.money(item.menuPrice)}</span>
               ${Components.renderStatusBadge(item.available !== false ? 'available' : 'unavailable')}
             </div>
           </div>
@@ -72,16 +84,18 @@
       `).join(''));
     },
 
-    renderTodayOrdersSummary(orders) {
+    async renderRecentOrders() {
       const $el = $('#todayOrdersSummary');
       if (!$el.length) return;
+
+      const orders = await OrderService.getAll(this.getCanteenId());
       const recent = orders
         .filter((o) => o.status !== 'upcoming')
         .sort((a, b) => new Date(b.orderTime) - new Date(a.orderTime))
         .slice(0, 4);
 
       if (!recent.length) {
-        $el.html('<p class="text-muted mb-0">No orders yet today.</p>');
+        $el.html(`<p class="text-muted mb-0">${I18n.t('noOrders')}</p>`);
         return;
       }
 
@@ -92,305 +106,276 @@
             <span class="text-muted ms-2">${o.studentName}</span>
           </div>
           <div class="d-flex align-items-center gap-2">
-            <span class="fw-600">${AppState.formatMoney(o.total)}</span>
+            <span class="fw-600">${Utils.money(o.total)}</span>
             ${Components.renderStatusBadge(o.status)}
           </div>
         </a>
       `).join(''));
     },
 
-    initMyMenus() {
-      const canteen = AppState.getCanteen(this.getCanteenId());
-      if (!canteen) return;
-
-      const menus = (canteen.assignedMenuIds || [])
-        .map((id) => AppState.getMenu(id))
-        .filter(Boolean);
-
+    async initMyMenu() {
+      const canteenId = this.getCanteenId();
+      const menus = await MenuService.getForCanteen(canteenId);
       const today = menus.filter((m) => m.status === 'active');
-      const upcoming = menus.filter((m) => m.status !== 'active');
+      const upcoming = menus.filter((m) => m.status !== 'active' || m.availability === 'unavailable');
 
-      this.renderMenuGroup('#todayMenus', today, 'No menus for today', 'Assigned active menus will show here.');
-      this.renderMenuGroup('#upcomingMenus', upcoming.length ? upcoming : menus.filter((m) => m.status === 'draft'),
-        'No upcoming menus', 'Draft or scheduled menus will appear here.');
-
-      this.bindMenuCardClicks();
-      this.bindAvailabilityDates();
-    },
-
-    renderMenuGroup(selector, menus, emptyTitle, emptyText) {
-      const $el = $(selector);
-      if (!$el.length) return;
-
-      if (!menus.length) {
-        $el.html(Components.renderEmptyState('bi-journal', emptyTitle, emptyText));
-        return;
-      }
-
-      $el.html(menus.map((m) => `
-        <div class="menu-card" data-id="${m.id}" data-aos="fade-up" role="button" tabindex="0">
-          <div class="menu-card-top">
-            <div>
-              <h3>${m.name}</h3>
-              <p class="menu-desc">${m.description || ''}</p>
-            </div>
-            <div class="d-flex align-items-center gap-2">
-              ${Components.renderStatusBadge(m.status)}
-              ${Components.renderActionMenu('cm-menu', m.id, [
-                { action: 'view', label: 'View menu', icon: 'bi-eye' },
-                { action: 'dates', label: 'Change Availability Dates', icon: 'bi-calendar-range' }
-              ])}
-            </div>
-          </div>
-          <div class="menu-meta">
-            <span><i class="bi bi-egg-fried" aria-hidden="true"></i> ${AppState.countMenuItems(m)} items</span>
-            <span>${Components.renderStatusBadge(m.availability === 'available' ? 'available' : 'unavailable')}</span>
-          </div>
-        </div>
-      `).join(''));
-    },
-
-    bindMenuCardClicks() {
-      $(document).on('click keypress', '#todayMenus .menu-card, #upcomingMenus .menu-card', function (e) {
-        if ($(e.target).closest('.action-menu').length) return;
-        if (e.type === 'keypress' && e.which !== 13) return;
-        window.location.href = 'my-menus.html?menu=' + $(this).data('id');
-      });
-
-      // If menu query param, show detail view
-      const menuId = Components.getQueryParam('menu');
-      if (menuId) {
-        this.showMenuDetail(menuId);
-      }
-
-      $(document).on('click', '[data-entity="cm-menu"]', async function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        const id = $(this).data('id');
-        const action = $(this).data('action');
-        if (action === 'view') {
-          CanteenManager.showMenuDetail(id);
-        } else if (action === 'dates') {
-          CanteenManager.changeAvailabilityDates(id);
+      const renderGrid = ($el, list) => {
+        if (!list.length) {
+          $el.html(Components.renderEmptyState('bi-journal-richtext', I18n.t('noMenus'), ''));
+          return;
         }
-      });
+        $el.html(list.map((m) => Components.renderMenu(m, { actions: false })).join(''));
+        $el.find('.menu-card').on('click keypress', function (e) {
+          if (e.type === 'keypress' && e.which !== 13) return;
+          const id = $(this).data('id');
+          window.location.href = 'my-menu.html?menu=' + id;
+        });
+      };
+
+      renderGrid($('#todayMenus'), today);
+      renderGrid($('#upcomingMenus'), upcoming);
+
+      const menuParam = Components.getQueryParam('menu');
+      if (menuParam) this.showMenuDetail(menuParam);
     },
 
-    showMenuDetail(menuId) {
-      const menu = AppState.getMenu(menuId);
+    async showMenuDetail(menuId) {
+      const menu = await MenuService.getById(menuId);
       if (!menu) return;
 
       $('#menusListView').hide();
       $('#menuDetailView').show();
-      $('#cmMenuName').text(menu.name);
-      $('#cmMenuDesc').text(menu.description || '');
+
+      $('#cmMenuName').text(Utils.localized(menu.name));
+      $('#cmMenuDesc').text(Utils.localized(menu.description));
       $('#cmMenuStatus').html(Components.renderStatusBadge(menu.status));
 
-      const $sections = $('#cmMenuSections');
-      $sections.html((menu.sections || []).map((sec) => `
-        <div class="section-block mb-3">
-          <div class="section-block-header">
-            <h4>${sec.name}</h4>
+      const products = await ProductService.getAll();
+      const productMap = {};
+      products.forEach((p) => { productMap[p.id] = p; });
+
+      const canOverride = APP_CONFIG.permissions.canOverridePrices;
+
+      $('#cmMenuSections').html((menu.sections || []).map((sec) => `
+        <div class="section-block mb-4" data-aos="fade-up">
+          <div class="section-block-header d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0">${Utils.localized(sec.name)}</h4>
+            <button type="button" class="btn-app btn-outline-app btn-sm-app btn-change-availability" data-menu="${menu.id}">
+              <i class="bi bi-calendar3"></i> ${I18n.t('changeAvailability')}
+            </button>
           </div>
           ${(sec.items || []).map((item) => {
-            const product = AppState.getProduct(item.productId);
+            const product = productMap[item.productId];
             if (!product) return '';
-            const available = item.available !== false;
+            const avail = item.available !== false;
+            const priceUi = canOverride
+              ? `<button type="button" class="btn-app btn-ghost-app btn-sm-app btn-edit-price" data-menu="${menu.id}" data-item="${item.id}" data-price="${item.menuPrice}">${I18n.t('editPrice')}</button>`
+              : `<span class="text-muted small">${I18n.t('priceManaged')}</span>`;
             return `
-              <div class="menu-item-row flex-wrap" data-menu="${menu.id}" data-item="${item.id}">
-                <img class="menu-item-img object-cover" src="${product.image}" alt="${product.name}" loading="lazy">
-                <div class="menu-item-info">
-                  <strong>${product.name}</strong>
-                  <span>${product.description || ''}</span>
+              <div class="menu-item-row cm-menu-item" data-item-id="${item.id}" data-menu-id="${menu.id}">
+                <img class="menu-item-img object-cover" src="${product.image}" alt="${Utils.localized(product.name)}" loading="lazy">
+                <div class="menu-item-info flex-grow-1">
+                  <strong>${Utils.localized(product.name)}</strong>
+                  <span>${Utils.localized(product.description)}</span>
                 </div>
-                <div class="menu-item-price">${AppState.formatMoney(item.menuPrice)}</div>
-                <label class="toggle-app ms-auto" title="Toggle availability">
-                  <span class="visually-hidden">Available</span>
-                  <input type="checkbox" class="item-avail-toggle" ${available ? 'checked' : ''}
-                         data-menu="${menu.id}" data-item="${item.id}" data-name="${product.name}">
-                  <span class="toggle-track" aria-hidden="true"></span>
-                  <span class="toggle-label">${available ? 'Available' : 'Unavailable'}</span>
+                <div class="menu-item-price">${Utils.money(item.menuPrice)}</div>
+                ${priceUi}
+                <label class="toggle-app ms-2">
+                  <input type="checkbox" class="item-avail-toggle" data-menu="${menu.id}" data-item="${item.id}" ${avail ? 'checked' : ''}>
+                  <span class="toggle-track"></span>
                 </label>
-                <div class="availability-panel w-100 ${available ? '' : 'show'}" id="panel-${item.id}">
-                  <h5>Mark ${product.name} Unavailable?</h5>
-                  <p>This item will no longer be available for ordering at this canteen.</p>
-                  <div class="form-group-app">
-                    <label class="form-label-app" for="reason-${item.id}">Reason</label>
-                    <select class="form-select-app select2-avail-reason" id="reason-${item.id}" data-placeholder="Select reason">
-                      <option value=""></option>
-                      <option value="out_of_stock">Out of stock</option>
-                      <option value="sold_out">Sold out</option>
-                      <option value="temp">Temporarily unavailable</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-                  <div class="form-group-app">
-                    <label class="form-label-app">Duration</label>
-                    <div class="check-list">
-                      <label class="check-item"><input type="radio" name="dur-${item.id}" value="today" checked> <span>Today only</span></label>
-                      <label class="check-item"><input type="radio" name="dur-${item.id}" value="range"> <span>Date range</span></label>
-                      <label class="check-item"><input type="radio" name="dur-${item.id}" value="until"> <span>Until I turn on again</span></label>
-                    </div>
-                  </div>
-                  <div class="d-flex gap-2 justify-content-end">
-                    <button type="button" class="btn-app btn-outline-app btn-sm-app btn-cancel-unavail" data-item="${item.id}">Cancel</button>
-                    <button type="button" class="btn-app btn-primary-app btn-sm-app btn-confirm-unavail"
-                            data-menu="${menu.id}" data-item="${item.id}" data-name="${product.name}">Mark Unavailable</button>
-                  </div>
-                </div>
-              </div>`;
+              </div>
+              <div class="unavail-panel" id="unavail-${item.id}" style="display:none"></div>`;
           }).join('')}
         </div>
       `).join(''));
 
-      $sections.find('.select2-avail-reason').each(function () {
-        Components.initializeSelect2($(this), { placeholder: 'Select reason', allowClear: true });
-      });
-
-      this.bindItemAvailability();
+      this.bindMenuDetailActions(menu);
     },
 
-    bindItemAvailability() {
-      $(document).off('change.itemAvail').on('change.itemAvail', '.item-avail-toggle', function () {
-        const $toggle = $(this);
-        const itemId = $toggle.data('item');
-        const $panel = $('#panel-' + itemId);
-        const checked = $toggle.is(':checked');
+    bindMenuDetailActions(menu) {
+      $('.item-avail-toggle').off('change').on('change', async function () {
+        const $t = $(this);
+        const menuId = $t.data('menu');
+        const itemId = $t.data('item');
+        const panel = $('#unavail-' + itemId);
 
-        $toggle.closest('.toggle-app').find('.toggle-label').text(checked ? 'Available' : 'Unavailable');
-
-        if (checked) {
-          // Turning back on
-          const menu = AppState.getMenu($toggle.data('menu'));
-          const item = CanteenManager.findMenuItem(menu, itemId);
-          if (item) {
-            item.available = true;
-            delete item.unavailableReason;
-            AppState.persist();
-            Components.showToast('Item is available again.', 'success');
-          }
-          $panel.removeClass('show');
+        if ($t.is(':checked')) {
+          await MenuService.updateItemAvailability(menuId, itemId, { available: true });
+          panel.hide().empty();
+          Components.showToast(I18n.t('available'), 'success');
         } else {
-          $panel.addClass('show');
+          panel.show().html(CanteenManager.renderUnavailPanel(menuId, itemId));
+          CanteenManager.initUnavailPanel(menuId, itemId);
         }
       });
 
-      $(document).off('click.cancelUnavail').on('click.cancelUnavail', '.btn-cancel-unavail', function () {
-        const itemId = $(this).data('item');
-        const $toggle = $(`.item-avail-toggle[data-item="${itemId}"]`);
-        $toggle.prop('checked', true).trigger('change');
-        $('#panel-' + itemId).removeClass('show');
-      });
-
-      $(document).off('click.confirmUnavail').on('click.confirmUnavail', '.btn-confirm-unavail', function () {
+      $('.btn-edit-price').off('click').on('click', async function () {
+        if (!APP_CONFIG.permissions.canOverridePrices) return;
         const menuId = $(this).data('menu');
         const itemId = $(this).data('item');
-        const name = $(this).data('name');
-        const reason = $('#reason-' + itemId).val();
-
-        if (!reason) {
-          Components.showToast('Please select a reason.', 'error');
-          return;
+        const current = $(this).data('price');
+        const { value: price } = await Swal.fire({
+          title: I18n.t('editPrice'),
+          input: 'number',
+          inputValue: current,
+          showCancelButton: true,
+          confirmButtonColor: '#1a365d',
+          confirmButtonText: I18n.t('save')
+        });
+        if (price != null) {
+          await MenuService.updateItemPrice(menuId, itemId, price);
+          Components.showSuccess(I18n.t('success'), I18n.t('saveChanges'));
+          CanteenManager.showMenuDetail(menuId);
         }
+      });
 
-        const menu = AppState.getMenu(menuId);
-        const item = CanteenManager.findMenuItem(menu, itemId);
-        if (!item) return;
-
-        item.available = false;
-        item.unavailableReason = reason;
-        item.unavailableDuration = $(`input[name="dur-${itemId}"]:checked`).val();
-        AppState.persist();
-
-        $('#panel-' + itemId).removeClass('show');
-        Components.showToast(`${name} marked unavailable.`, 'success');
+      $('.btn-change-availability').off('click').on('click', () => {
+        this.openAvailabilityModal(menu);
       });
     },
 
-    findMenuItem(menu, itemId) {
-      if (!menu) return null;
-      for (const sec of menu.sections || []) {
-        const item = (sec.items || []).find((i) => i.id === itemId);
-        if (item) return item;
+    renderUnavailPanel(menuId, itemId) {
+      return `
+        <div class="card-app p-3 mb-2">
+          <p class="small text-muted mb-2">${I18n.t('markUnavailable')}</p>
+          <div class="row g-2">
+            <div class="col-md-4 form-group-app">
+              <label class="form-label-app">${I18n.t('reason')}</label>
+              <select class="form-select-app unavail-reason select2-field" data-placeholder="${I18n.t('reason')}">
+                <option value="out_of_stock">${I18n.t('outOfStock')}</option>
+                <option value="sold_out">${I18n.t('soldOut')}</option>
+                <option value="temp">${I18n.t('tempUnavailable')}</option>
+                <option value="other">${I18n.t('other')}</option>
+              </select>
+            </div>
+            <div class="col-md-4 form-group-app">
+              <label class="form-label-app">${I18n.t('dateRange')}</label>
+              <select class="form-select-app unavail-duration">
+                <option value="today">${I18n.t('onlyToday')}</option>
+                <option value="range">${I18n.t('dateRange')}</option>
+                <option value="until">${I18n.t('untilOn')}</option>
+              </select>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+              <button type="button" class="btn-app btn-primary-app btn-sm-app btn-confirm-unavail" data-menu="${menuId}" data-item="${itemId}">${I18n.t('save')}</button>
+            </div>
+          </div>
+        </div>`;
+    },
+
+    initUnavailPanel(menuId, itemId) {
+      const $panel = $('#unavail-' + itemId);
+      Components.initializeSelect2($panel.find('.unavail-reason'), { minimumResultsForSearch: Infinity });
+
+      $panel.find('.btn-confirm-unavail').on('click', async () => {
+        await MenuService.updateItemAvailability(menuId, itemId, {
+          available: false,
+          unavailableReason: $panel.find('.unavail-reason').val(),
+          unavailableDuration: $panel.find('.unavail-duration').val()
+        });
+        Components.showSuccess(I18n.t('success'), I18n.t('markUnavailable'));
+        $panel.hide();
+      });
+    },
+
+    openAvailabilityModal(menu) {
+      const $modal = $('#availabilityModal');
+      if (!$modal.length) return;
+
+      const weekdays = menu.weekdays || ['mon', 'tue', 'wed', 'thu', 'fri'];
+      const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+      $('#weekdayChecks').html(days.map((d) => `
+        <label class="form-check-app">
+          <input type="checkbox" class="weekday-check" value="${d}" ${weekdays.includes(d) ? 'checked' : ''}>
+          <span>${I18n.t(d)}</span>
+        </label>
+      `).join(''));
+
+      bootstrap.Modal.getOrCreateInstance($modal[0]).show();
+
+      if (typeof flatpickr !== 'undefined') {
+        Forms.initFlatpickr('#availFrom', { defaultDate: menu.availabilityDates?.from });
+        Forms.initFlatpickr('#availTo', { defaultDate: menu.availabilityDates?.to });
       }
-      return null;
-    },
 
-    async changeAvailabilityDates(menuId) {
-      const menu = AppState.getMenu(menuId);
-      if (!menu) return;
-
-      const { value: formValues } = await Swal.fire({
-        title: 'Change Availability Dates',
-        html: `
-          <div class="text-start">
-            <label class="form-label-app">From</label>
-            <input type="date" id="swalFrom" class="form-control-app mb-2">
-            <label class="form-label-app">To</label>
-            <input type="date" id="swalTo" class="form-control-app">
-          </div>`,
-        focusConfirm: false,
-        showCancelButton: true,
-        confirmButtonText: 'Save',
-        confirmButtonColor: '#0c7a6f',
-        preConfirm: () => ({
-          from: document.getElementById('swalFrom').value,
-          to: document.getElementById('swalTo').value
-        })
+      $('#btnSaveAvailability').off('click').on('click', async () => {
+        const selected = [];
+        $('.weekday-check:checked').each(function () { selected.push($(this).val()); });
+        await MenuService.updateAvailability(menu.id, {
+          weekdays: selected,
+          availabilityDates: {
+            from: $('#availFrom').val() || null,
+            to: $('#availTo').val() || null
+          }
+        });
+        bootstrap.Modal.getInstance($modal[0]).hide();
+        Components.showSuccess(I18n.t('success'), I18n.t('changeAvailability'));
       });
-
-      if (!formValues) return;
-      menu.availabilityDates = formValues;
-      menu.lastUpdated = new Date().toISOString();
-      AppState.persist();
-      Components.showToast('Availability dates updated.', 'success');
     },
 
-    bindAvailabilityDates() {
-      // handled via action menu
-    },
-
-    initSettings() {
-      const canteen = AppState.getCanteen(this.getCanteenId());
-      const settings = AppState.data.settings;
+    async initSettings() {
+      const canteenId = this.getCanteenId();
+      const canteen = await CanteenService.getById(canteenId);
+      const settings = Storage.get('settings') || Utils.clone(SchoolFoodSeed.settings);
+      const cm = settings.canteenManager || SchoolFoodSeed.settings.canteenManager;
 
       if (canteen) {
         $('#setCanteenName').val(canteen.name);
-        $('#setCanteenPhone').val(canteen.phone || '');
-        $('#setCanteenEmail').val(canteen.email || '');
+        $('#setCanteenPhone').val(canteen.phone);
+        $('#setCanteenEmail').val(canteen.email);
         $('#setCanteenActive').prop('checked', canteen.status === 'active');
       }
 
-      $('#setAllowSameDay').prop('checked', settings.canteen.allowSameDay);
-      $('#setLastOrderTime').val(settings.canteen.lastOrderTime);
-      $('#setStopWindow').val(settings.canteen.stopWindowMinutes);
-      $('#setMaxQty').val(settings.canteen.maxQtyPerItem);
+      const ord = cm.ordering || {};
+      $('#setAllowSameDay').prop('checked', ord.allowSameDay !== false);
+      $('#setLastOrderTime').val(ord.lastOrderTime || '11:30');
+      $('#setStopWindow').val(ord.stopWindowMinutes || 30);
+      $('#setMaxQty').val(ord.maxQtyPerItem || 5);
 
-      $('#notifNewOrder').prop('checked', settings.notifications.newOrder);
-      $('#notifCancelled').prop('checked', settings.notifications.orderCancelled);
-      $('#notifUnavailable').prop('checked', settings.notifications.itemUnavailable);
-      $('#notifDaily').prop('checked', settings.notifications.dailySummary);
+      const notif = cm.notifications || {};
+      $('#setNotifNew').prop('checked', notif.newOrder !== false);
+      $('#setNotifCancelled').prop('checked', notif.orderCancelled !== false);
+      $('#setNotifUnavailable').prop('checked', notif.itemUnavailable !== false);
+      $('#setNotifSummary').prop('checked', !!notif.dailySummary);
 
-      $('#btnSaveSettings').on('click', () => {
+      $('#cmAccountHint').text(APP_CONFIG.roles.canteenManager.name + ' · ' + APP_CONFIG.roles.canteenManager.email);
+
+      if (location.hash === '#canteen') Components.setActiveTab('canteen');
+      else if (location.hash === '#ordering') Components.setActiveTab('ordering');
+      else if (location.hash === '#notifications') Components.setActiveTab('notifications');
+      else if (location.hash === '#account') Components.setActiveTab('account');
+
+      $('#btnSaveSettings').off('click').on('click', async () => {
         if (canteen) {
-          canteen.name = $('#setCanteenName').val().trim() || canteen.name;
-          canteen.phone = $('#setCanteenPhone').val().trim();
-          canteen.email = $('#setCanteenEmail').val().trim();
-          canteen.status = $('#setCanteenActive').is(':checked') ? 'active' : 'inactive';
+          await CanteenService.update(canteenId, {
+            name: $('#setCanteenName').val(),
+            phone: $('#setCanteenPhone').val(),
+            email: $('#setCanteenEmail').val(),
+            status: $('#setCanteenActive').is(':checked') ? 'active' : 'inactive'
+          });
         }
 
-        settings.canteen.allowSameDay = $('#setAllowSameDay').is(':checked');
-        settings.canteen.lastOrderTime = $('#setLastOrderTime').val();
-        settings.canteen.stopWindowMinutes = parseInt($('#setStopWindow').val(), 10) || 30;
-        settings.canteen.maxQtyPerItem = parseInt($('#setMaxQty').val(), 10) || 5;
+        const s = Storage.get('settings') || Utils.clone(SchoolFoodSeed.settings);
+        s.canteenManager = s.canteenManager || {};
+        s.canteenManager.ordering = {
+          allowSameDay: $('#setAllowSameDay').is(':checked'),
+          lastOrderTime: $('#setLastOrderTime').val(),
+          stopWindowMinutes: Number($('#setStopWindow').val()) || 30,
+          maxQtyPerItem: Number($('#setMaxQty').val()) || 5
+        };
+        s.canteenManager.notifications = {
+          newOrder: $('#setNotifNew').is(':checked'),
+          orderCancelled: $('#setNotifCancelled').is(':checked'),
+          itemUnavailable: $('#setNotifUnavailable').is(':checked'),
+          dailySummary: $('#setNotifSummary').is(':checked')
+        };
+        Storage.set('settings', s);
+        Components.showSuccess(I18n.t('success'), I18n.t('saveChanges'));
+      });
 
-        settings.notifications.newOrder = $('#notifNewOrder').is(':checked');
-        settings.notifications.orderCancelled = $('#notifCancelled').is(':checked');
-        settings.notifications.itemUnavailable = $('#notifUnavailable').is(':checked');
-        settings.notifications.dailySummary = $('#notifDaily').is(':checked');
-
-        AppState.persist();
-        Components.showToast('Settings saved.', 'success');
+      $('#btnChangePassword').on('click', () => {
+        Components.showSuccess(I18n.t('success'), 'Password updated (demo)');
       });
     }
   };

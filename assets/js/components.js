@@ -1,13 +1,15 @@
 /**
- * School Food Platform — Reusable UI Components
+ * Reusable UI components — I18n + Utils + services.
  */
 (function (global, $) {
   'use strict';
 
+  const CONFIRM_COLOR = '#1a365d';
+
   const Components = {
     showToast(message, type, title) {
       type = type || 'success';
-      title = title || (type === 'success' ? 'Success' : type === 'error' ? 'Error' : 'Notice');
+      title = title || (type === 'success' ? I18n.t('success') : type === 'error' ? 'Error' : 'Notice');
 
       let $container = $('.toast-container-app');
       if (!$container.length) {
@@ -34,7 +36,6 @@
 
       $container.append($toast);
       $toast.find('.toast-close').on('click', () => this.dismissToast($toast));
-
       setTimeout(() => this.dismissToast($toast), 3500);
     },
 
@@ -46,12 +47,12 @@
 
     showConfirm(options) {
       const opts = $.extend({
-        title: 'Are you sure?',
+        title: I18n.t('confirm'),
         text: '',
         icon: 'warning',
-        confirmText: 'Confirm',
-        cancelText: 'Cancel',
-        confirmColor: '#0c7a6f',
+        confirmText: I18n.t('confirm'),
+        cancelText: I18n.t('cancel'),
+        confirmColor: CONFIRM_COLOR,
         danger: false
       }, options);
 
@@ -69,9 +70,7 @@
         confirmButtonColor: opts.danger ? '#dc2626' : opts.confirmColor,
         cancelButtonColor: '#6b7c8a',
         reverseButtons: true,
-        customClass: {
-          popup: 'rounded-app-lg'
-        }
+        customClass: { popup: 'rounded-app-lg' }
       }).then((result) => result.isConfirmed);
     },
 
@@ -81,7 +80,7 @@
           icon: 'success',
           title: title,
           text: text || '',
-          confirmButtonColor: '#0c7a6f',
+          confirmButtonColor: CONFIRM_COLOR,
           timer: 2200,
           showConfirmButton: true
         });
@@ -91,44 +90,47 @@
     },
 
     renderStatusBadge(status) {
-      const map = {
-        active: { cls: 'badge-success', label: 'Active' },
-        inactive: { cls: 'badge-neutral', label: 'Inactive' },
-        draft: { cls: 'badge-warning', label: 'Draft' },
-        available: { cls: 'badge-success', label: 'Available' },
-        unavailable: { cls: 'badge-danger', label: 'Unavailable' },
-        new: { cls: 'badge-info', label: 'New' },
-        preparing: { cls: 'badge-warning', label: 'Preparing' },
-        ready: { cls: 'badge-primary', label: 'Ready' },
-        completed: { cls: 'badge-success', label: 'Completed' },
-        upcoming: { cls: 'badge-neutral', label: 'Upcoming' },
-        cancelled: { cls: 'badge-danger', label: 'Cancelled' }
+      const clsMap = {
+        active: 'badge-success',
+        inactive: 'badge-neutral',
+        draft: 'badge-warning',
+        available: 'badge-success',
+        unavailable: 'badge-danger',
+        new: 'badge-info',
+        preparing: 'badge-warning',
+        ready: 'badge-primary',
+        completed: 'badge-success',
+        upcoming: 'badge-neutral',
+        cancelled: 'badge-danger'
       };
-      const s = map[status] || { cls: 'badge-neutral', label: status };
-      return `<span class="badge-app ${s.cls}"><span class="visually-hidden">Status: </span>${s.label}</span>`;
+      const cls = clsMap[status] || 'badge-neutral';
+      const label = I18n.statusLabel(status);
+      return `<span class="badge-app ${cls}"><span class="visually-hidden">${I18n.t('status')}: </span>${label}</span>`;
     },
 
     renderCanteen(canteen, options) {
       options = options || {};
-      const school = AppState.getSchool(canteen.schoolId);
+      const name = canteen.name || '—';
+      const school = CanteenService.getSchoolName(canteen.schoolId);
       const menuCount = (canteen.assignedMenuIds || []).length;
       const actions = options.actions !== false;
 
       return `
         <div class="canteen-card" data-id="${canteen.id}" data-aos="fade-up" role="button" tabindex="0"
-             aria-label="View ${canteen.name}">
+             aria-label="${name}">
           <div class="canteen-card-top">
             <div>
-              <h3>${canteen.name}</h3>
-              <p class="school-name">${school ? school.name : '—'}</p>
+              <h3>${name}</h3>
+              <p class="school-name">${school}</p>
             </div>
             <div class="d-flex align-items-center gap-2">
               ${this.renderStatusBadge(canteen.status)}
               ${actions ? this.renderActionMenu('canteen', canteen.id, [
-                { action: 'view', label: 'View', icon: 'bi-eye' },
-                { action: 'assign', label: 'Assign Menu', icon: 'bi-link-45deg' },
+                { action: 'view', label: I18n.t('view'), icon: 'bi-eye' },
+                { action: 'edit', label: I18n.t('edit'), icon: 'bi-pencil' },
+                { action: 'assign', label: I18n.t('assignMenu'), icon: 'bi-link-45deg' },
                 { action: canteen.status === 'active' ? 'deactivate' : 'activate',
-                  label: canteen.status === 'active' ? 'Deactivate' : 'Activate',
+                  label: canteen.status === 'active' ? I18n.t('deactivate') : I18n.t('activate'),
                   icon: canteen.status === 'active' ? 'bi-pause-circle' : 'bi-play-circle',
                   danger: canteen.status === 'active' }
               ]) : ''}
@@ -137,8 +139,8 @@
           <div class="canteen-meta">
             <span><i class="bi bi-telephone" aria-hidden="true"></i> ${canteen.phone || '—'}</span>
             <span><i class="bi bi-envelope" aria-hidden="true"></i> ${canteen.email || '—'}</span>
-            <span><i class="bi bi-journal-text" aria-hidden="true"></i> ${menuCount} menu${menuCount !== 1 ? 's' : ''}</span>
-            <span><i class="bi bi-clock" aria-hidden="true"></i> ${AppState.formatRelative(canteen.lastActivity)}</span>
+            <span><i class="bi bi-journal-text" aria-hidden="true"></i> ${menuCount} ${I18n.t('menus').toLowerCase()}</span>
+            <span><i class="bi bi-clock" aria-hidden="true"></i> ${Utils.formatRelative(canteen.lastUpdated)}</span>
           </div>
         </div>
       `;
@@ -146,38 +148,40 @@
 
     renderMenu(menu, options) {
       options = options || {};
-      const itemCount = AppState.countMenuItems(menu);
-      const sectionCount = AppState.countSections(menu);
+      const itemCount = MenuService.countItems(menu);
+      const sectionCount = MenuService.countSections(menu);
       const assigned = (menu.assignedCanteenIds || []).length;
+      const name = Utils.localized(menu.name);
+      const desc = Utils.localized(menu.description) || '—';
 
       return `
         <div class="menu-card" data-id="${menu.id}" data-aos="fade-up" role="button" tabindex="0"
-             aria-label="View ${menu.name}">
+             aria-label="${name}">
           <div class="menu-card-top">
             <div>
-              <h3>${menu.name}</h3>
-              <p class="menu-desc">${menu.description || 'No description'}</p>
+              <h3>${name}</h3>
+              <p class="menu-desc">${desc}</p>
             </div>
             <div class="d-flex align-items-center gap-2">
               ${this.renderStatusBadge(menu.status)}
-              ${this.renderActionMenu('menu', menu.id, [
-                { action: 'view', label: 'View', icon: 'bi-eye' },
-                { action: 'edit', label: 'Edit', icon: 'bi-pencil' },
-                { action: 'assign', label: 'Assign', icon: 'bi-link-45deg' },
+              ${options.actions !== false ? this.renderActionMenu('menu', menu.id, [
+                { action: 'view', label: I18n.t('view'), icon: 'bi-eye' },
+                { action: 'edit', label: I18n.t('edit'), icon: 'bi-pencil' },
+                { action: 'assign', label: I18n.t('assign'), icon: 'bi-link-45deg' },
                 { action: menu.status === 'active' ? 'deactivate' : 'activate',
-                  label: menu.status === 'active' ? 'Deactivate' : 'Activate',
+                  label: menu.status === 'active' ? I18n.t('deactivate') : I18n.t('activate'),
                   icon: menu.status === 'active' ? 'bi-pause-circle' : 'bi-play-circle' },
                 { divider: true },
-                { action: 'delete', label: 'Delete', icon: 'bi-trash', danger: true }
-              ])}
+                { action: 'delete', label: I18n.t('delete'), icon: 'bi-trash', danger: true }
+              ]) : ''}
             </div>
           </div>
           <div class="menu-meta">
-            <span><i class="bi bi-layers" aria-hidden="true"></i> ${sectionCount} sections</span>
-            <span><i class="bi bi-egg-fried" aria-hidden="true"></i> ${itemCount} items</span>
-            <span><i class="bi bi-shop" aria-hidden="true"></i> ${assigned} canteens</span>
+            <span><i class="bi bi-layers" aria-hidden="true"></i> ${sectionCount} ${I18n.t('sections').toLowerCase()}</span>
+            <span><i class="bi bi-egg-fried" aria-hidden="true"></i> ${itemCount} ${I18n.t('items').toLowerCase()}</span>
+            <span><i class="bi bi-shop" aria-hidden="true"></i> ${assigned}</span>
             <span>${this.renderStatusBadge(menu.availability === 'available' ? 'available' : 'unavailable')}</span>
-            <span><i class="bi bi-clock" aria-hidden="true"></i> ${AppState.formatRelative(menu.lastUpdated)}</span>
+            <span><i class="bi bi-clock" aria-hidden="true"></i> ${Utils.formatRelative(menu.lastUpdated)}</span>
           </div>
         </div>
       `;
@@ -187,19 +191,21 @@
       options = options || {};
       if (!product) return '';
       const available = item.available !== false;
+      const name = Utils.localized(product.name);
+      const desc = Utils.localized(product.description) || '';
 
       return `
         <div class="menu-item-row" data-item-id="${item.id}" data-product-id="${product.id}">
-          <img class="menu-item-img object-cover" src="${product.image}" alt="${product.name}" loading="lazy">
+          <img class="menu-item-img object-cover" src="${product.image}" alt="${name}" loading="lazy">
           <div class="menu-item-info">
-            <strong>${product.name}</strong>
-            <span>${product.description || ''}</span>
+            <strong>${name}</strong>
+            <span>${desc}</span>
           </div>
-          <div class="menu-item-price">${AppState.formatMoney(item.menuPrice)}</div>
+          <div class="menu-item-price">${Utils.money(item.menuPrice)}</div>
           ${this.renderStatusBadge(available ? 'available' : 'unavailable')}
           ${options.actions !== false ? this.renderActionMenu('menu-item', item.id, [
-            { action: 'edit', label: 'Edit', icon: 'bi-pencil' },
-            { action: 'remove', label: 'Remove', icon: 'bi-trash', danger: true }
+            { action: 'edit', label: I18n.t('edit'), icon: 'bi-pencil' },
+            { action: 'remove', label: I18n.t('delete'), icon: 'bi-trash', danger: true }
           ]) : ''}
         </div>
       `;
@@ -207,40 +213,40 @@
 
     renderOrder(order, options) {
       options = options || {};
-      const itemCount = order.items ? order.items.reduce((s, i) => s + i.qty, 0) : 0;
+      const itemCount = order.items ? order.items.reduce((s, i) => s + (i.qty || 1), 0) : 0;
       let actionBtn = '';
 
       if (order.status === 'new') {
-        actionBtn = `<button type="button" class="btn-app btn-primary-app btn-sm-app btn-order-action" data-action="start" data-id="${order.id}">Start Preparing</button>`;
+        actionBtn = `<button type="button" class="btn-app btn-primary-app btn-sm-app btn-order-action" data-action="start" data-id="${order.id}">${I18n.t('startPreparing')}</button>`;
       } else if (order.status === 'preparing') {
-        actionBtn = `<button type="button" class="btn-app btn-primary-app btn-sm-app btn-order-action" data-action="ready" data-id="${order.id}">Mark Ready</button>`;
+        actionBtn = `<button type="button" class="btn-app btn-primary-app btn-sm-app btn-order-action" data-action="ready" data-id="${order.id}">${I18n.t('markReady')}</button>`;
       } else if (order.status === 'ready') {
-        actionBtn = `<button type="button" class="btn-app btn-primary-app btn-sm-app btn-order-action" data-action="complete" data-id="${order.id}">Mark Completed</button>`;
+        actionBtn = `<button type="button" class="btn-app btn-primary-app btn-sm-app btn-order-action" data-action="complete" data-id="${order.id}">${I18n.t('completeOrder')}</button>`;
       }
 
       return `
         <div class="order-card" data-id="${order.id}" data-aos="fade-up" role="button" tabindex="0"
-             aria-label="Order #${order.orderNumber}">
+             aria-label="#${order.orderNumber}">
           <div class="order-card-main">
             <div class="order-number">#${order.orderNumber}</div>
             <div class="order-student">
               <strong>${order.studentName}</strong>
-              <span>Grade ${order.className}</span>
+              <span>${order.classroom || order.className || '—'}</span>
             </div>
             <div class="order-meta-item">
-              <strong>Time</strong>
-              ${AppState.formatTime(order.orderTime)}
+              <strong>${I18n.t('today')}</strong>
+              ${Utils.formatTime(order.orderTime)}
             </div>
             <div class="order-meta-item">
-              <strong>Items</strong>
-              ${itemCount} item${itemCount !== 1 ? 's' : ''}
+              <strong>${I18n.t('items')}</strong>
+              ${itemCount}
             </div>
-            <div class="order-total">${AppState.formatMoney(order.total)}</div>
+            <div class="order-total">${Utils.money(order.total)}</div>
             ${this.renderStatusBadge(order.status)}
           </div>
           <div class="order-actions">
             ${actionBtn}
-            <button type="button" class="btn-app btn-outline-app btn-sm-app btn-view-order" data-id="${order.id}">View</button>
+            <button type="button" class="btn-app btn-outline-app btn-sm-app btn-view-order" data-id="${order.id}">${I18n.t('view')}</button>
           </div>
         </div>
       `;
@@ -261,7 +267,7 @@
       return `
         <div class="dropdown action-menu" onclick="event.stopPropagation()">
           <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"
-                  aria-label="Actions">
+                  aria-label="${I18n.t('actions')}">
             <i class="bi bi-three-dots-vertical" aria-hidden="true"></i>
           </button>
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-app">${menuItems}</ul>
@@ -280,7 +286,6 @@
 
     renderStatusStepper(currentStatus) {
       const steps = ['new', 'preparing', 'ready', 'completed'];
-      const labels = { new: 'New', preparing: 'Preparing', ready: 'Ready', completed: 'Completed' };
       const currentIdx = steps.indexOf(currentStatus);
 
       return `
@@ -289,16 +294,14 @@
             let cls = '';
             if (i < currentIdx) cls = 'completed';
             else if (i === currentIdx) cls = 'active';
-            const line = i < steps.length - 1
-              ? `<div class="status-step-line" aria-hidden="true"></div>`
-              : '';
+            const line = i < steps.length - 1 ? `<div class="status-step-line" aria-hidden="true"></div>` : '';
             return `
               <div class="status-step ${cls}" role="listitem" aria-current="${i === currentIdx ? 'step' : 'false'}">
                 <div class="status-step-node">
                   <div class="status-step-dot">
                     ${i < currentIdx ? '<i class="bi bi-check" aria-hidden="true"></i>' : (i + 1)}
                   </div>
-                  <span class="status-step-label">${labels[step]}</span>
+                  <span class="status-step-label">${I18n.statusLabel(step)}</span>
                 </div>
                 ${line}
               </div>`;
@@ -308,9 +311,10 @@
 
     initializeSelect2($el, options) {
       if (!$el || !$el.length || typeof $.fn.select2 !== 'function') return;
+      const dir = document.documentElement.getAttribute('dir') || 'ltr';
       options = $.extend({
         width: '100%',
-        theme: 'default'
+        dir: dir
       }, options);
       $el.select2(options);
     },
@@ -335,15 +339,6 @@
       if (content) {
         gsap.from(content, { opacity: 0, y: 12, duration: 0.35, ease: 'power2.out' });
       }
-
-      document.querySelectorAll('.btn-primary-app').forEach((btn) => {
-        btn.addEventListener('mouseenter', () => {
-          gsap.to(btn, { scale: 1.02, duration: 0.15, ease: 'power1.out' });
-        });
-        btn.addEventListener('mouseleave', () => {
-          gsap.to(btn, { scale: 1, duration: 0.15, ease: 'power1.out' });
-        });
-      });
     },
 
     animateCountUp(selector, endValue, options) {
@@ -351,7 +346,6 @@
       const el = typeof selector === 'string' ? document.querySelector(selector) : selector;
       if (!el) return;
 
-      const duration = options.duration || 1.2;
       const CountUpClass =
         (typeof countUp !== 'undefined' && countUp.CountUp) ||
         (typeof CountUp !== 'undefined' ? CountUp : null);
@@ -359,7 +353,7 @@
       if (CountUpClass) {
         try {
           const c = new CountUpClass(el, Number(endValue) || 0, {
-            duration: duration,
+            duration: options.duration || 1.2,
             separator: ',',
             useEasing: true
           });
@@ -367,16 +361,13 @@
             c.start();
             return;
           }
-        } catch (err) {
-          /* fall through */
-        }
+        } catch (err) { /* fall through */ }
       }
       el.textContent = String(endValue);
     },
 
     getQueryParam(name) {
-      const params = new URLSearchParams(window.location.search);
-      return params.get(name);
+      return Utils.query(name);
     },
 
     setActiveTab(tabId) {
@@ -393,10 +384,12 @@
     Components.initializeAOS();
     Components.initializeAnimations();
 
-    // Global tab handling
     $(document).on('click', '.tabs-app .tab-btn', function () {
-      const tab = $(this).data('tab');
-      Components.setActiveTab(tab);
+      Components.setActiveTab($(this).data('tab'));
+    });
+
+    document.addEventListener('langchange', () => {
+      I18n.applyDom();
     });
   });
 })(window, jQuery);

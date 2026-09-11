@@ -1,0 +1,108 @@
+/* RTL overrides for Arabic */
+html[dir="rtl"] body,
+body.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+html[dir="rtl"] .app-sidebar {
+  left: auto;
+  right: 0;
+  border-right: none;
+  border-left: 1px solid var(--border);
+}
+
+html[dir="rtl"] .app-main {
+  margin-left: 0;
+  margin-right: var(--sidebar-width);
+}
+
+html[dir="rtl"] .nav-link-app {
+  text-align: right;
+}
+
+html[dir="rtl"] .coming-soon-badge {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+html[dir="rtl"] .search-box i {
+  left: auto;
+  right: 0.85rem;
+}
+
+html[dir="rtl"] .search-box input {
+  padding: 0.55rem 2.35rem 0.55rem 0.85rem;
+}
+
+html[dir="rtl"] .breadcrumb-app {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+html[dir="rtl"] .page-header,
+html[dir="rtl"] .detail-header,
+html[dir="rtl"] .card-app-header,
+html[dir="rtl"] .canteen-card-top,
+html[dir="rtl"] .menu-card-top,
+html[dir="rtl"] .food-card-footer,
+html[dir="rtl"] .order-card,
+html[dir="rtl"] .info-list li {
+  text-align: right;
+}
+
+html[dir="rtl"] .info-list .value {
+  text-align: left;
+}
+
+html[dir="rtl"] .dropdown-menu-app .dropdown-item {
+  text-align: right;
+  flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .toast-container-app {
+  right: auto;
+  left: 1.25rem;
+}
+
+html[dir="rtl"] .status-stepper {
+  flex-direction: row-reverse;
+}
+
+html[dir="rtl"] .modal-header .btn-close {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+html[dir="rtl"] .select2-container--default .select2-selection--single .select2-selection__arrow {
+  left: 6px;
+  right: auto;
+}
+
+html[dir="rtl"] .select2-container--default .select2-selection--single .select2-selection__rendered {
+  padding-right: 0;
+  padding-left: 20px;
+  text-align: right;
+}
+
+html[dir="rtl"] .quick-action-btn {
+  text-align: right;
+  flex-direction: row-reverse;
+}
+
+@media (max-width: 991.98px) {
+  html[dir="rtl"] .app-sidebar {
+    transform: translateX(100%);
+  }
+  html[dir="rtl"] .app-sidebar.open {
+    transform: translateX(0);
+  }
+  html[dir="rtl"] .app-main {
+    margin-right: 0;
+  }
+}
+
+/* Select2 RTL dropdown parent */
+html[dir="rtl"] .select2-dropdown {
+  text-align: right;
+}

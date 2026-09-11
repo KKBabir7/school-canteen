@@ -1,0 +1,189 @@
+/* Parent / Student ordering experience */
+.wallet-card {
+  border-radius: var(--radius-xl);
+  padding: 1.35rem 1.5rem;
+  color: #fff;
+  background: linear-gradient(135deg, #1a365d 0%, #2c5282 55%, #5f8f75 120%);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+  min-height: 150px;
+}
+
+.wallet-card.child {
+  background: linear-gradient(135deg, #2d3748 0%, #4a5568 60%, #718096 120%);
+}
+
+.wallet-card::after {
+  content: '';
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  top: -40px;
+  right: -30px;
+}
+
+html[dir="rtl"] .wallet-card::after {
+  right: auto;
+  left: -30px;
+}
+
+.wallet-card .label {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  margin-bottom: 0.35rem;
+}
+
+.wallet-card .balance {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+
+.wallet-card .wallet-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.wallet-card .wallet-actions .btn-app {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.25);
+  color: #fff;
+}
+
+.wallet-card .wallet-actions .btn-app:hover {
+  background: rgba(255,255,255,0.28);
+  color: #fff;
+}
+
+.child-home-card {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 1.15rem;
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.child-home-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.child-home-card .child-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.order-food-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 991.98px) {
+  .order-food-grid {
+    grid-template-columns: 1fr;
+  }
+  .tray-sticky {
+    position: fixed !important;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1025;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
+    box-shadow: 0 -8px 24px rgba(21,32,43,0.12);
+  }
+  .app-content.has-tray {
+    padding-bottom: 7rem;
+  }
+}
+
+.tray-sticky {
+  position: sticky;
+  top: 80px;
+}
+
+.menu-order-item {
+  display: flex;
+  gap: 0.85rem;
+  align-items: center;
+  padding: 0.85rem;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  margin-bottom: 0.65rem;
+}
+
+.menu-order-item.is-blocked,
+.menu-order-item.is-unavailable {
+  opacity: 0.55;
+}
+
+.menu-order-item img {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+}
+
+.qty-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.qty-control button {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.35rem;
+}
+
+.calendar-day {
+  min-height: 72px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem;
+  background: var(--surface);
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.calendar-day.has-order {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+
+.calendar-day.closed {
+  background: var(--neutral-bg);
+  color: var(--muted);
+}
+
+.parent-hero {
+  background: linear-gradient(135deg, #e8eef6 0%, #e8f3ec 100%);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--border-light);
+}
+
+.activity-amount.pos { color: var(--success); font-weight: 700; }
+.activity-amount.neg { color: var(--danger); font-weight: 700; }

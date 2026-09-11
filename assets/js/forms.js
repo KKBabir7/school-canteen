@@ -1,5 +1,5 @@
 /**
- * School Food Platform — Form Helpers
+ * Form helpers — validation, Select2 in modals, Flatpickr.
  */
 (function (global, $) {
   'use strict';
@@ -21,18 +21,18 @@
           if (!$err.length) {
             $err = $('<div class="form-error"></div>').appendTo($group);
           }
-          $err.text('This field is required.').show();
+          $err.text(I18n.t('required')).show();
         }
       });
       return valid;
     },
 
     validateEmail(email) {
-      if (!email) return true;
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      return Utils.emailOk(email);
     },
 
     resetForm($form) {
+      if (!$form || !$form.length) return;
       $form[0].reset();
       $form.find('.is-invalid').removeClass('is-invalid');
       $form.find('.form-error').hide();
@@ -64,14 +64,15 @@
 
     initSelect2InModal($modal) {
       $modal.on('shown.bs.modal', function () {
-        $(this).find('.select2-field').each(function () {
+        const $m = $(this);
+        $m.find('.select2-field').each(function () {
           const $el = $(this);
           if ($el.hasClass('select2-hidden-accessible')) {
             $el.select2('destroy');
           }
           Components.initializeSelect2($el, {
-            dropdownParent: $modal,
-            placeholder: $el.data('placeholder') || 'Select...',
+            dropdownParent: $m,
+            placeholder: $el.data('placeholder') || I18n.t('search'),
             allowClear: !!$el.data('allow-clear'),
             multiple: $el.prop('multiple')
           });
@@ -85,6 +86,16 @@
           }
         });
       });
+    },
+
+    initFlatpickr(selector, options) {
+      if (typeof flatpickr === 'undefined') return null;
+      const el = typeof selector === 'string' ? document.querySelector(selector) : selector;
+      if (!el) return null;
+      return flatpickr(el, $.extend({
+        dateFormat: 'Y-m-d',
+        allowInput: true
+      }, options || {}));
     }
   };
 

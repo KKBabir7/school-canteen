@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Orders | Student | SchoolFood</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="../assets/css/style.css" rel="stylesheet">
+  <link href="../assets/css/dashboard.css" rel="stylesheet">
+  <link href="../assets/css/components.css" rel="stylesheet">
+  <link href="../assets/css/forms.css" rel="stylesheet">
+  <link href="../assets/css/ordering.css" rel="stylesheet">
+  <link href="../assets/css/rtl.css" rel="stylesheet">
+  <link href="../assets/css/responsive.css" rel="stylesheet">
+</head>
+<body>
+  <div class="app-shell"><div class="app-main"><div class="app-content">
+    <div class="page-header">
+      <div class="page-header-text"><h1 data-i18n="myOrders">My Orders</h1></div>
+      <a href="order.html" class="btn-app btn-primary-app" data-i18n="orderFood">Order Food</a>
+    </div>
+    <div class="tabs-app order-tabs">
+      <button type="button" class="tab-btn active" data-tab="upcoming" data-i18n="upcomingOrders">Upcoming</button>
+      <button type="button" class="tab-btn" data-tab="past" data-i18n="pastOrders">Past</button>
+      <button type="button" class="tab-btn" data-tab="cancelled" data-i18n="cancelled">Cancelled</button>
+    </div>
+    <div id="studentOrders"></div>
+  </div></div></div>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/mock-data.js"></script>
+  <script src="../assets/js/translations.js"></script>
+  <script src="../assets/js/services/canteen-service.js"></script>
+  <script src="../assets/js/services/order-service.js"></script>
+  <script src="../assets/js/services/child-service.js"></script>
+  <script src="../assets/js/services/wallet-service.js"></script>
+  <script src="../assets/js/components.js"></script>
+  <script src="../assets/js/navigation.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/parent.js"></script>
+  <script src="../assets/js/student.js"></script>
+  <script>$(function(){ StudentApp.initOrders(); });</script>
+</body>
+</html>
