@@ -17,6 +17,21 @@ html[dir="rtl"] .app-main {
   margin-right: var(--sidebar-width);
 }
 
+html[dir="rtl"] body.sidebar-collapsed .app-main {
+  margin-left: 0;
+  margin-right: var(--sidebar-collapsed);
+}
+
+html[dir="rtl"] .user-menu-copy {
+  align-items: flex-end;
+  text-align: right;
+}
+
+html[dir="rtl"] .user-menu-caret {
+  margin-left: 0;
+  margin-right: 0.15rem;
+}
+
 html[dir="rtl"] .nav-link-app {
   text-align: right;
 }
@@ -51,6 +66,15 @@ html[dir="rtl"] .info-list li {
   text-align: right;
 }
 
+html[dir="rtl"] .menu-card {
+  padding-left: 1.2rem;
+  padding-right: 1.35rem;
+}
+
+html[dir="rtl"] .menu-card-accent {
+  inset: 0 0 0 auto;
+}
+
 html[dir="rtl"] .info-list .value {
   text-align: left;
 }
@@ -65,8 +89,9 @@ html[dir="rtl"] .toast-container-app {
   left: 1.25rem;
 }
 
-html[dir="rtl"] .status-stepper {
-  flex-direction: row-reverse;
+html[dir="rtl"] .status-step::after {
+  left: auto;
+  right: calc(50% + 18px);
 }
 
 html[dir="rtl"] .modal-header .btn-close {

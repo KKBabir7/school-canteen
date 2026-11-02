@@ -20,6 +20,15 @@
     cookie: 'https://images.unsplash.com/photo-1499636133433-04f6d2a4b5a8?w=400&h=300&fit=crop&q=80'
   };
 
+  /** Relative demo timestamps so Reports "Last N days" always has data */
+  function demoDay(daysAgo, time) {
+    const d = new Date();
+    d.setHours(12, 0, 0, 0);
+    d.setDate(d.getDate() - daysAgo);
+    const date = d.toISOString().slice(0, 10);
+    return { orderDate: date, orderTime: date + 'T' + (time || '10:30:00') };
+  }
+
   const AV = {
     david: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&q=80',
     layla: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&q=80',
@@ -310,44 +319,44 @@
     ],
 
     orders: [
-      { id: 'SC-10245', orderNumber: 'SC-10245', studentName: 'Sarah Ahmed', childId: 'child-1', parentId: 'usr-par-1', classroom: 'Grade 3A', canteenId: 'can-1', orderDate: '2026-09-12', orderTime: '2026-09-12T10:35:00', status: 'new', total: 40, items: [
+      Object.assign({ id: 'SC-10245', orderNumber: 'SC-10245', studentName: 'Sarah Ahmed', childId: 'child-1', parentId: 'usr-par-1', classroom: 'Grade 3A', canteenId: 'can-1', status: 'new', total: 40, items: [
         { productId: 'prd-1', name: { en: 'Chicken Wrap', ar: 'راب الدجاج' }, qty: 1, price: 18, image: IMG.chickenWrap },
         { productId: 'prd-3', name: { en: 'Pasta Bowl', ar: 'طبق معكرونة' }, qty: 1, price: 16, image: IMG.pasta },
         { productId: 'prd-6', name: { en: 'Fresh Juice', ar: 'عصير طازج' }, qty: 1, price: 7, image: IMG.juice }
-      ]},
-      { id: 'SC-10246', orderNumber: 'SC-10246', studentName: 'Omar Ahmed', childId: 'child-2', parentId: 'usr-par-1', classroom: 'Grade 5B', canteenId: 'can-1', orderDate: '2026-09-12', orderTime: '2026-09-12T10:42:00', status: 'new', total: 28, items: [
+      ]}, demoDay(0, '10:35:00')),
+      Object.assign({ id: 'SC-10246', orderNumber: 'SC-10246', studentName: 'Omar Ahmed', childId: 'child-2', parentId: 'usr-par-1', classroom: 'Grade 5B', canteenId: 'can-1', status: 'new', total: 28, items: [
         { productId: 'prd-4', name: { en: 'Classic Burger', ar: 'برجر كلاسيك' }, qty: 1, price: 20, image: IMG.burger },
         { productId: 'prd-5', name: { en: 'French Fries', ar: 'بطاطس مقلية' }, qty: 1, price: 8, image: IMG.fries }
-      ]},
-      { id: 'SC-10240', orderNumber: 'SC-10240', studentName: 'Maya Levi', classroom: 'Grade 4A', canteenId: 'can-1', orderTime: '2026-09-11T10:20:00', status: 'preparing', total: 22, items: [
+      ]}, demoDay(0, '10:42:00')),
+      Object.assign({ id: 'SC-10240', orderNumber: 'SC-10240', studentName: 'Maya Levi', classroom: 'Grade 4A', canteenId: 'can-1', status: 'preparing', total: 22, items: [
         { productId: 'prd-2', name: { en: 'Pizza Slice', ar: 'شريحة بيتزا' }, qty: 1, price: 15, image: IMG.pizza },
         { productId: 'prd-6', name: { en: 'Fresh Juice', ar: 'عصير طازج' }, qty: 1, price: 7, image: IMG.juice }
-      ]},
-      { id: 'SC-10241', orderNumber: 'SC-10241', studentName: 'Youssef Nasser', classroom: 'Grade 6C', canteenId: 'can-1', orderTime: '2026-09-11T10:25:00', status: 'preparing', total: 30, items: [
+      ]}, demoDay(1, '10:20:00')),
+      Object.assign({ id: 'SC-10241', orderNumber: 'SC-10241', studentName: 'Youssef Nasser', classroom: 'Grade 6C', canteenId: 'can-1', status: 'preparing', total: 30, items: [
         { productId: 'prd-1', name: { en: 'Chicken Wrap', ar: 'راب الدجاج' }, qty: 1, price: 18, image: IMG.chickenWrap },
         { productId: 'prd-5', name: { en: 'French Fries', ar: 'بطاطس مقلية' }, qty: 1, price: 8, image: IMG.fries },
         { productId: 'prd-7', name: { en: 'Bottled Water', ar: 'ماء معدني' }, qty: 1, price: 4, image: IMG.water }
-      ]},
-      { id: 'SC-10238', orderNumber: 'SC-10238', studentName: 'Noa Berg', classroom: 'Grade 2B', canteenId: 'can-1', orderTime: '2026-09-11T10:10:00', status: 'ready', total: 19, items: [
+      ]}, demoDay(1, '10:25:00')),
+      Object.assign({ id: 'SC-10238', orderNumber: 'SC-10238', studentName: 'Noa Berg', classroom: 'Grade 2B', canteenId: 'can-1', status: 'ready', total: 19, items: [
         { productId: 'prd-8', name: { en: 'Garden Salad', ar: 'سلطة حدائق' }, qty: 1, price: 12, image: IMG.salad },
         { productId: 'prd-6', name: { en: 'Fresh Juice', ar: 'عصير طازج' }, qty: 1, price: 7, image: IMG.juice }
-      ]},
-      { id: 'SC-10239', orderNumber: 'SC-10239', studentName: 'Adam Weiss', classroom: 'Grade 7A', canteenId: 'can-1', orderTime: '2026-09-11T10:15:00', status: 'ready', total: 24, items: [
+      ]}, demoDay(1, '10:10:00')),
+      Object.assign({ id: 'SC-10239', orderNumber: 'SC-10239', studentName: 'Adam Weiss', classroom: 'Grade 7A', canteenId: 'can-1', status: 'ready', total: 24, items: [
         { productId: 'prd-3', name: { en: 'Pasta Bowl', ar: 'طبق معكرونة' }, qty: 1, price: 16, image: IMG.pasta },
         { productId: 'prd-5', name: { en: 'French Fries', ar: 'بطاطس مقلية' }, qty: 1, price: 8, image: IMG.fries }
-      ]},
-      { id: 'SC-10250', orderNumber: 'SC-10250', studentName: 'Lina Haddad', classroom: 'Grade 3B', canteenId: 'can-1', orderTime: '2026-09-11T12:00:00', status: 'upcoming', total: 25, items: [
+      ]}, demoDay(2, '10:15:00')),
+      Object.assign({ id: 'SC-10250', orderNumber: 'SC-10250', studentName: 'Lina Haddad', classroom: 'Grade 3B', canteenId: 'can-1', status: 'upcoming', total: 25, items: [
         { productId: 'prd-9', name: { en: 'Turkey Sandwich', ar: 'ساندويتش ديك رومي' }, qty: 1, price: 14, image: IMG.sandwich },
         { productId: 'prd-10', name: { en: 'Fruit Yogurt', ar: 'زبادي بالفاكهة' }, qty: 1, price: 6, image: IMG.yogurt },
         { productId: 'prd-7', name: { en: 'Bottled Water', ar: 'ماء معدني' }, qty: 1, price: 4, image: IMG.water }
-      ]},
-      { id: 'SC-10230', orderNumber: 'SC-10230', studentName: 'Daniel Cohen', classroom: 'Grade 5A', canteenId: 'can-1', orderTime: '2026-09-11T09:50:00', status: 'completed', total: 25, items: [
+      ]}, demoDay(3, '12:00:00')),
+      Object.assign({ id: 'SC-10230', orderNumber: 'SC-10230', studentName: 'Daniel Cohen', classroom: 'Grade 5A', canteenId: 'can-1', status: 'completed', total: 25, items: [
         { productId: 'prd-4', name: { en: 'Classic Burger', ar: 'برجر كلاسيك' }, qty: 1, price: 20, image: IMG.burger },
         { productId: 'prd-11', name: { en: 'Coca Cola', ar: 'كوكا كولا' }, qty: 1, price: 5, image: IMG.cola }
-      ]},
-      { id: 'SC-10231', orderNumber: 'SC-10231', studentName: 'Rana Mansour', classroom: 'Grade 4C', canteenId: 'can-1', orderTime: '2026-09-11T09:55:00', status: 'completed', total: 18, items: [
+      ]}, demoDay(4, '09:50:00')),
+      Object.assign({ id: 'SC-10231', orderNumber: 'SC-10231', studentName: 'Rana Mansour', classroom: 'Grade 4C', canteenId: 'can-1', status: 'completed', total: 18, items: [
         { productId: 'prd-1', name: { en: 'Chicken Wrap', ar: 'راب الدجاج' }, qty: 1, price: 18, image: IMG.chickenWrap }
-      ]}
+      ]}, demoDay(5, '09:55:00'))
     ],
 
     settings: {

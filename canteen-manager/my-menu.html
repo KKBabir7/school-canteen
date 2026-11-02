@@ -30,26 +30,29 @@
         </nav>
 
         <div id="menusListView">
-          <div class="page-header">
+          <div class="page-header page-header--panel">
             <div class="page-header-text">
+              <p class="page-kicker"><i class="bi bi-journal-text" aria-hidden="true"></i> Assigned menus</p>
               <h1 data-i18n="myMenus">My Menus</h1>
               <p data-i18n="myMenusDesc">Menus assigned to your canteen by the food provider.</p>
             </div>
           </div>
 
-          <h2 class="h5 mb-3" data-aos="fade-up" data-i18n="today">Today's menus</h2>
-          <div class="menu-grid mb-5" id="todayMenus"></div>
-
-          <h2 class="h5 mb-3" data-aos="fade-up" data-i18n="upcoming">Upcoming menus</h2>
-          <div class="menu-grid" id="upcomingMenus"></div>
+          <div class="tabs-app order-tabs mb-3" role="tablist" id="cmMenuTabs">
+            <button type="button" class="tab-btn active" data-tab="today" data-i18n="today">Today</button>
+            <button type="button" class="tab-btn" data-tab="upcoming" data-i18n="upcoming">Upcoming</button>
+          </div>
+          <div class="menu-grid" id="todayMenus"></div>
+          <div class="menu-grid" id="upcomingMenus" style="display:none"></div>
         </div>
 
         <div id="menuDetailView" style="display:none">
-          <div class="page-header">
+          <div class="page-header page-header--panel">
             <div class="page-header-text">
               <button type="button" class="btn-app btn-ghost-app btn-sm-app mb-2" id="btnBackToMenus">
                 <i class="bi bi-arrow-left"></i> <span data-i18n="myMenus">Back</span>
               </button>
+              <p class="page-kicker"><i class="bi bi-journal-richtext" aria-hidden="true"></i> Menu details</p>
               <h1 id="cmMenuName">Menu</h1>
               <p id="cmMenuDesc" class="mb-2"></p>
               <div id="cmMenuStatus"></div>
@@ -61,12 +64,18 @@
     </div>
   </div>
 
-  <div class="modal fade modal-app" id="availabilityModal" tabindex="-1">
+  <div class="modal fade modal-app" id="availabilityModal" tabindex="-1" aria-labelledby="availabilityModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h2 class="modal-title" data-i18n="changeAvailability">Change Availability Dates</h2>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <div class="modal-title-wrap">
+            <span class="modal-title-icon" aria-hidden="true"><i class="bi bi-calendar-range"></i></span>
+            <div>
+              <h2 class="modal-title" id="availabilityModalLabel" data-i18n="changeAvailability">Change Availability Dates</h2>
+              <p class="modal-subtitle">Set weekdays and the date window for this menu</p>
+            </div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="form-group-app">
@@ -76,17 +85,19 @@
           <div class="row g-2">
             <div class="col-6 form-group-app">
               <label class="form-label-app" for="availFrom" data-i18n="from">From</label>
-              <input type="text" id="availFrom" class="form-control-app">
+              <input type="text" id="availFrom" class="form-control-app" placeholder="Select date" autocomplete="off">
             </div>
             <div class="col-6 form-group-app">
               <label class="form-label-app" for="availTo" data-i18n="to">To</label>
-              <input type="text" id="availTo" class="form-control-app">
+              <input type="text" id="availTo" class="form-control-app" placeholder="Select date" autocomplete="off">
             </div>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn-app btn-outline-app" data-bs-dismiss="modal" data-i18n="cancel">Cancel</button>
-          <button type="button" class="btn-app btn-primary-app" id="btnSaveAvailability" data-i18n="save">Save</button>
+          <button type="button" class="btn-app btn-primary-app" id="btnSaveAvailability">
+            <i class="bi bi-check2-circle" aria-hidden="true"></i> <span data-i18n="save">Save</span>
+          </button>
         </div>
       </div>
     </div>
@@ -102,6 +113,7 @@
   <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/session.js"></script>
   <script src="../assets/js/utils.js"></script>
   <script src="../assets/js/translations.js"></script>
   <script src="../assets/js/mock-data.js"></script>

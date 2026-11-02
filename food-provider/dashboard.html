@@ -29,20 +29,32 @@
         </div>
 
         <div class="stat-grid">
-          <div class="stat-card" data-aos="fade-up">
-            <div class="stat-card-label"><span data-i18n="totalCanteens">Total Canteens</span></div>
+          <div class="stat-card stat-card--navy" data-aos="fade-up">
+            <div class="stat-card-label">
+              <span data-i18n="totalCanteens">Total Canteens</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-shop-window"></i></span>
+            </div>
             <div class="stat-card-value" id="statTotalCanteens">0</div>
           </div>
-          <div class="stat-card" data-aos="fade-up">
-            <div class="stat-card-label"><span data-i18n="activeCanteens">Active Canteens</span></div>
+          <div class="stat-card stat-card--teal" data-aos="fade-up">
+            <div class="stat-card-label">
+              <span data-i18n="activeCanteens">Active Canteens</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-check2-circle"></i></span>
+            </div>
             <div class="stat-card-value" id="statActiveCanteens">0</div>
           </div>
-          <div class="stat-card" data-aos="fade-up">
-            <div class="stat-card-label"><span data-i18n="activeMenus">Active Menus</span></div>
+          <div class="stat-card stat-card--sky" data-aos="fade-up">
+            <div class="stat-card-label">
+              <span data-i18n="activeMenus">Active Menus</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-journal-text"></i></span>
+            </div>
             <div class="stat-card-value" id="statActiveMenus">0</div>
           </div>
-          <div class="stat-card" data-aos="fade-up">
-            <div class="stat-card-label"><span data-i18n="draftMenus">Draft Menus</span></div>
+          <div class="stat-card stat-card--coral" data-aos="fade-up">
+            <div class="stat-card-label">
+              <span data-i18n="draftMenus">Draft Menus</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-pencil-square"></i></span>
+            </div>
             <div class="stat-card-value" id="statDraftMenus">0</div>
           </div>
         </div>
@@ -81,23 +93,58 @@
     </div>
   </div>
 
-  <div class="modal fade modal-app" id="assignMenuModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
+  <div class="modal fade modal-app" id="assignMenuModal" tabindex="-1" aria-labelledby="assignMenuModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
-        <div class="modal-header"><h2 class="modal-title" data-i18n="assignMenu">Assign Menu</h2><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-        <div class="modal-body">
-          <div class="form-group-app"><label class="form-label-app" for="assignMenuSelect">Menu</label><select id="assignMenuSelect" class="select2-field"></select></div>
-          <div class="form-group-app"><label class="form-label-app" for="assignCanteensSelect" data-i18n="selectCanteens">Select Canteens</label><select id="assignCanteensSelect" class="select2-field" multiple></select></div>
-          <div class="form-group-app"><label class="toggle-app"><input type="checkbox" id="assignDateRange"><span class="toggle-track"></span><span class="toggle-label" data-i18n="specificDates">Specific dates</span></label></div>
-          <div id="assignDateFields" class="row g-2" style="display:none">
-            <div class="col-6"><input type="text" id="assignFrom" class="form-control-app" placeholder="From"></div>
-            <div class="col-6"><input type="text" id="assignTo" class="form-control-app" placeholder="To"></div>
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <span class="modal-title-icon" aria-hidden="true"><i class="bi bi-link-45deg"></i></span>
+            <div>
+              <h2 class="modal-title" id="assignMenuModalLabel" data-i18n="assignMenu">Assign Menu</h2>
+              <p class="modal-subtitle">Link a menu to one or more canteens</p>
+            </div>
           </div>
-          <div class="form-group-app mb-0"><select id="assignStatus" class="form-select-app"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group-app">
+            <label class="form-label-app" for="assignMenuSelect">Select Menu <span class="required">*</span></label>
+            <select id="assignMenuSelect" class="select2-field" data-placeholder="Choose a menu" data-allow-clear="true"></select>
+          </div>
+          <div class="form-group-app">
+            <label class="form-label-app" for="assignCanteensSelect" data-i18n="selectCanteens">Select Canteens <span class="required">*</span></label>
+            <select id="assignCanteensSelect" class="select2-field" multiple data-placeholder="Choose canteens"></select>
+          </div>
+          <div class="form-group-app">
+            <label class="toggle-app">
+              <input type="checkbox" id="assignDateRange">
+              <span class="toggle-track" aria-hidden="true"></span>
+              <span class="toggle-label" data-i18n="specificDates">Available only during specific dates</span>
+            </label>
+          </div>
+          <div id="assignDateFields" class="row g-2 assign-date-fields" hidden>
+            <div class="col-6 form-group-app">
+              <label class="form-label-app" for="assignFrom">From</label>
+              <input type="text" id="assignFrom" class="form-control-app" placeholder="Select date" autocomplete="off">
+            </div>
+            <div class="col-6 form-group-app">
+              <label class="form-label-app" for="assignTo">To</label>
+              <input type="text" id="assignTo" class="form-control-app" placeholder="Select date" autocomplete="off">
+            </div>
+          </div>
+          <div class="form-group-app mb-0">
+            <label class="form-label-app" for="assignStatus">Status</label>
+            <select id="assignStatus" class="select2-field" data-placeholder="Select status">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn-app btn-outline-app" data-bs-dismiss="modal" data-i18n="cancel">Cancel</button>
-          <button type="button" class="btn-app btn-primary-app" id="btnConfirmAssign" data-i18n="assign">Assign</button>
+          <button type="button" class="btn-app btn-primary-app" id="btnConfirmAssign">
+            <i class="bi bi-check2-circle" aria-hidden="true"></i> <span data-i18n="assign">Assign</span>
+          </button>
         </div>
       </div>
     </div>
@@ -113,6 +160,7 @@
   <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/session.js"></script>
   <script src="../assets/js/utils.js"></script>
   <script src="../assets/js/translations.js"></script>
   <script src="../assets/js/mock-data.js"></script>

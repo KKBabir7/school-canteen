@@ -21,10 +21,17 @@
   <div class="app-shell">
     <div class="app-main">
       <div class="app-content">
-        <nav aria-label="Breadcrumb"><ol class="breadcrumb-app"><li><a href="dashboard.html" data-i18n="dashboard">Dashboard</a></li><li class="separator">/</li><li><span class="current" data-i18n="orders">Orders</span></li></ol></nav>
+        <nav aria-label="Breadcrumb">
+          <ol class="breadcrumb-app">
+            <li><a href="dashboard.html" data-i18n="dashboard">Dashboard</a></li>
+            <li class="separator" aria-hidden="true">/</li>
+            <li><span class="current" data-i18n="orders">Orders</span></li>
+          </ol>
+        </nav>
 
-        <div class="page-header">
+        <div class="page-header page-header--panel">
           <div class="page-header-text">
+            <p class="page-kicker"><i class="bi bi-bag-check" aria-hidden="true"></i> Service desk</p>
             <h1 data-i18n="orders">Orders</h1>
             <p data-i18n="ordersDesc">Process student orders through preparation and pickup.</p>
           </div>
@@ -38,10 +45,13 @@
           <button type="button" class="tab-btn" data-tab="history"><span data-i18n="history">History</span> <span class="tab-count" id="count-history">0</span></button>
         </div>
 
-        <div class="filters-bar">
-          <div class="search-box"><i class="bi bi-search"></i><input type="search" id="searchOrders" data-i18n-placeholder="search" placeholder="Search"></div>
+        <div class="filters-bar" data-aos="fade-up">
+          <div class="search-box">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <input type="search" id="searchOrders" data-i18n-placeholder="search" placeholder="Search orders">
+          </div>
           <div class="filter-select">
-            <select id="sortOrders">
+            <select id="sortOrders" class="select2-field" data-placeholder="Sort by">
               <option value="newest">Newest first</option>
               <option value="oldest">Oldest first</option>
               <option value="highest">Highest total</option>
@@ -66,6 +76,7 @@
   <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/session.js"></script>
   <script src="../assets/js/utils.js"></script>
   <script src="../assets/js/translations.js"></script>
   <script src="../assets/js/mock-data.js"></script>

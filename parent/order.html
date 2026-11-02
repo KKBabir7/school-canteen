@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Order Food | Parent | SchoolFood</title>
+  <meta name="description" content="Build a tray from today’s canteen menu for your child.">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
@@ -17,36 +18,62 @@
   <link href="../assets/css/responsive.css" rel="stylesheet">
 </head>
 <body>
-  <div class="app-shell"><div class="app-main"><div class="app-content">
-    <div class="page-header">
-      <div class="page-header-text"><h1 data-i18n="orderFood">Order Food</h1></div>
-      <div class="d-flex align-items-center gap-2"><span class="text-muted small" data-i18n="familyWallet">Family</span><strong id="orderFamilyBal">₪0</strong></div>
-    </div>
-    <div class="filters-bar">
-      <div class="filter-select flex-grow-1">
-        <label class="form-label-app" data-i18n="myChildren">Child</label>
-        <select id="orderChildSelect" class="form-select-app"></select>
-      </div>
-      <div class="filter-select">
-        <label class="form-label-app" data-i18n="today">Date</label>
-        <select id="orderDateSelect" class="form-select-app">
-          <option value="today" data-i18n="today">Today</option>
-          <option value="tomorrow" data-i18n="tomorrow">Tomorrow</option>
-        </select>
-      </div>
-    </div>
-    <div class="order-food-grid">
-      <div id="orderMenuSections"></div>
-      <div class="card-app tray-sticky">
-        <div class="card-app-header"><h3 data-i18n="tray">Tray</h3></div>
-        <div class="card-app-body">
-          <div id="trayItems"></div>
-          <div class="d-flex justify-content-between mt-3"><strong data-i18n="total">Total</strong><strong id="trayTotal">₪0</strong></div>
-          <button type="button" class="btn-app btn-primary-app w-100 mt-3" id="btnPlaceOrder" disabled data-i18n="placeOrder">Place Order</button>
+  <div class="app-shell">
+    <div class="app-main">
+      <div class="app-content order-flow">
+        <div class="order-topbar">
+          <div class="order-child-chip">
+            <img id="orderChildAvatar" src="" alt="" width="40" height="40">
+            <div class="order-child-meta">
+              <span class="order-child-label" data-i18n="orderingFor">Ordering for</span>
+              <select id="orderChildSelect" class="order-child-select select2-field" data-placeholder="Child" aria-label="Child"></select>
+            </div>
+          </div>
+          <a href="wallet.html" class="order-wallet-pill" title="Family wallet">
+            <i class="bi bi-wallet2" aria-hidden="true"></i>
+            <strong id="orderFamilyBal">₪0</strong>
+          </a>
         </div>
+
+        <div class="order-date-strip" id="orderDateStrip" role="listbox" aria-label="Order date"></div>
+
+        <section class="bento-tray-card" id="bentoTrayPreview">
+          <div class="bento-tray-head">
+            <div>
+              <h2 data-i18n="tray">Tray</h2>
+              <p class="bento-tray-hint">Tap food below to fill slots</p>
+            </div>
+            <button type="button" class="btn-app btn-sm-app btn-ghost-app" id="btnResetTray" data-i18n="reset">Reset</button>
+          </div>
+          <div class="bento-slots" id="bentoSlots"></div>
+        </section>
+
+        <section class="order-menu-panel">
+          <div class="order-search-wrap">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <input type="search" id="orderSearch" class="order-search" data-i18n-placeholder="search" placeholder="Search food...">
+          </div>
+
+          <div class="category-pills" id="orderCategories" role="tablist"></div>
+
+          <div class="food-bento-grid" id="orderMenuSections"></div>
+        </section>
+      </div>
+
+      <div class="order-dock" id="orderDock">
+        <div class="order-dock-total">
+          <span data-i18n="total">Total</span>
+          <strong id="trayTotal">₪0</strong>
+        </div>
+        <div class="slide-confirm" id="slideConfirm" aria-label="Slide to confirm order">
+          <div class="slide-knob" id="slideKnob"><i class="bi bi-chevron-right"></i></div>
+          <span class="slide-label" data-i18n="slideToConfirm">Slide to confirm</span>
+        </div>
+        <button type="button" class="btn-app btn-primary-app order-dock-btn d-none" id="btnPlaceOrder" disabled data-i18n="placeOrder">Place Order</button>
       </div>
     </div>
-  </div></div></div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -54,6 +81,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/session.js"></script>
   <script src="../assets/js/utils.js"></script>
   <script src="../assets/js/mock-data.js"></script>
   <script src="../assets/js/translations.js"></script>
@@ -65,9 +93,10 @@
   <script src="../assets/js/services/wallet-service.js"></script>
   <script src="../assets/js/services/school-service.js"></script>
   <script src="../assets/js/components.js"></script>
+  <script src="../assets/js/forms.js"></script>
   <script src="../assets/js/navigation.js"></script>
   <script src="../assets/js/app.js"></script>
   <script src="../assets/js/parent.js"></script>
-  <script>$(function(){ ParentApp.initOrder(); });</script>
+  <script>$(function () { ParentApp.initOrder(); });</script>
 </body>
 </html>

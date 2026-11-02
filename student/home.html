@@ -12,29 +12,125 @@
   <link href="../assets/css/dashboard.css" rel="stylesheet">
   <link href="../assets/css/components.css" rel="stylesheet">
   <link href="../assets/css/forms.css" rel="stylesheet">
+  <link href="../assets/css/ordering.css" rel="stylesheet">
   <link href="../assets/css/rtl.css" rel="stylesheet">
   <link href="../assets/css/responsive.css" rel="stylesheet">
 </head>
 <body>
-  <div class="app-shell"><div class="app-main"><div class="app-content">
-    <div class="parent-hero" data-aos="fade-up">
-      <h1 id="stuWelcome" data-i18n="home">Home</h1>
-      <p class="mb-3" data-i18n="welcomeStudent">Order lunch within your wallet and daily limit.</p>
-      <div class="d-flex flex-wrap gap-2">
-        <a href="order.html" class="btn-app btn-primary-app" data-i18n="orderFood">Order Food</a>
-        <a href="wallet.html" class="btn-app btn-outline-app" data-i18n="wallet">Wallet</a>
-      </div>
-    </div>
+  <div class="app-shell">
+    <div class="app-main">
+      <div class="app-content">
+        <nav aria-label="Breadcrumb">
+          <ol class="breadcrumb-app">
+            <li><span class="current" data-i18n="home">Home</span></li>
+          </ol>
+        </nav>
 
-    <div class="wallet-card mb-4" data-aos="fade-up">
-      <div class="label" data-i18n="wallet">Wallet</div>
-      <div class="balance" id="stuBalance">₪0</div>
-      <div class="wallet-actions">
-        <span class="text-muted small" id="stuLimit">—</span>
-        <a href="wallet.html" class="btn-app btn-sm-app" data-i18n="wallet">Wallet</a>
+        <div class="page-header page-header--panel" data-aos="fade-up">
+          <div class="page-header-text">
+            <p class="page-kicker"><i class="bi bi-mortarboard" aria-hidden="true"></i> Student</p>
+            <h1 id="stuWelcome">Hi</h1>
+            <p data-i18n="welcomeStudent">Order from today’s menu within your limits.</p>
+          </div>
+          <div class="page-actions">
+            <a href="order.html" class="btn-app btn-primary-app">
+              <i class="bi bi-cart3" aria-hidden="true"></i>
+              <span data-i18n="orderFood">Order Food</span>
+            </a>
+            <a href="wallet.html" class="btn-app btn-outline-app">
+              <i class="bi bi-wallet2" aria-hidden="true"></i>
+              <span data-i18n="wallet">Wallet</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="stat-grid student-home-stats" data-aos="fade-up">
+          <div class="stat-card stat-card--navy">
+            <div class="stat-card-label">
+              <span data-i18n="wallet">Wallet</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-wallet2"></i></span>
+            </div>
+            <div class="stat-card-value" id="stuBalance">₪0</div>
+          </div>
+          <div class="stat-card stat-card--teal">
+            <div class="stat-card-label">
+              <span data-i18n="dailyLimit">Daily limit left</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-speedometer2"></i></span>
+            </div>
+            <div class="stat-card-value" id="stuLimit">—</div>
+          </div>
+          <div class="stat-card stat-card--sky">
+            <div class="stat-card-label">
+              <span data-i18n="myOrders">My Orders</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-receipt"></i></span>
+            </div>
+            <div class="stat-card-value" id="stuOrderCount">0</div>
+          </div>
+          <div class="stat-card stat-card--coral">
+            <div class="stat-card-label">
+              <span data-i18n="orderFood">Order now</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-bag-plus"></i></span>
+            </div>
+            <div class="stat-card-value stat-card-value--action">
+              <a href="order.html" class="btn-app btn-sm-app btn-ghost-light">
+                <i class="bi bi-cart3" aria-hidden="true"></i>
+                <span data-i18n="orderFood">Order Food</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-lg-8">
+            <div class="card-app" data-aos="fade-up">
+              <div class="card-app-header">
+                <h3><i class="bi bi-lightning-charge" aria-hidden="true"></i> <span data-i18n="quickActions">Quick actions</span></h3>
+              </div>
+              <div class="card-app-body">
+                <div class="student-home-grid">
+                  <a href="order.html" class="student-quick-card">
+                    <span class="student-quick-icon" aria-hidden="true"><i class="bi bi-bag-plus"></i></span>
+                    <strong data-i18n="orderFood">Order Food</strong>
+                    <span>Browse today’s canteen menu</span>
+                  </a>
+                  <a href="orders.html" class="student-quick-card">
+                    <span class="student-quick-icon" aria-hidden="true"><i class="bi bi-receipt"></i></span>
+                    <strong data-i18n="myOrders">My Orders</strong>
+                    <span>Track preparing and ready meals</span>
+                  </a>
+                  <a href="calendar.html" class="student-quick-card">
+                    <span class="student-quick-icon" aria-hidden="true"><i class="bi bi-calendar3"></i></span>
+                    <strong data-i18n="calendar">Calendar</strong>
+                    <span>See menu days and past orders</span>
+                  </a>
+                  <a href="profile.html" class="student-quick-card">
+                    <span class="student-quick-icon" aria-hidden="true"><i class="bi bi-person-circle"></i></span>
+                    <strong data-i18n="profile">Profile</strong>
+                    <span>School, class, and account info</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="card-app student-wallet-side" data-aos="fade-up">
+              <div class="card-app-header">
+                <h3><i class="bi bi-wallet2" aria-hidden="true"></i> <span data-i18n="wallet">Wallet</span></h3>
+              </div>
+              <div class="card-app-body">
+                <div class="parent-wallet-balance" id="stuBalanceSide">₪0</div>
+                <p class="parent-wallet-hint"><span data-i18n="dailyLimit">Daily limit</span>: <span id="stuLimitSide">—</span></p>
+                <a href="wallet.html" class="btn-app btn-outline-app btn-sm-app">
+                  <span data-i18n="wallet">Wallet</span>
+                  <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div></div></div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -42,10 +138,12 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/session.js"></script>
   <script src="../assets/js/utils.js"></script>
   <script src="../assets/js/mock-data.js"></script>
   <script src="../assets/js/translations.js"></script>
   <script src="../assets/js/services/canteen-service.js"></script>
+  <script src="../assets/js/services/order-service.js"></script>
   <script src="../assets/js/services/child-service.js"></script>
   <script src="../assets/js/services/wallet-service.js"></script>
   <script src="../assets/js/services/school-service.js"></script>
@@ -53,6 +151,6 @@
   <script src="../assets/js/navigation.js"></script>
   <script src="../assets/js/app.js"></script>
   <script src="../assets/js/student.js"></script>
-  <script>$(function(){ StudentApp.initHome(); });</script>
+  <script>$(function () { StudentApp.initHome(); });</script>
 </body>
 </html>

@@ -10,11 +10,15 @@
 
     initOrdersPage() {
       this.currentTab = 'new';
+      Forms.initPageSelect2('#sortOrders');
       this.renderOrders();
       this.bindOrdersPage();
     },
 
     getCanteenId() {
+      if (typeof Session !== 'undefined' && Session.profile() && Session.profile().canteenId) {
+        return Session.profile().canteenId;
+      }
       return APP_CONFIG.roles.canteenManager.canteenId;
     },
 
@@ -137,7 +141,7 @@
       $('#odStudent').text(order.studentName);
       $('#odClassroom').text(order.classroom || order.className || '—');
       $('#odTime').text(Utils.formatTime(order.orderTime) + ' · ' + Utils.formatDate(order.orderTime));
-      $('#odTotal').text(Utils.money(order.total));
+      $('#odTotal').html(Utils.moneyHtml(order.total));
       $('#odStatus').html(Components.renderStatusBadge(order.status));
       $('#odStepper').html(Components.renderStatusStepper(order.status));
 
@@ -148,7 +152,7 @@
             <strong>${Utils.localized(item.name) || item.name}</strong>
             <span class="text-muted">× ${item.qty || 1}</span>
           </div>
-          <span>${Utils.money((item.price || 0) * (item.qty || 1))}</span>
+          <span class="order-line-price">${Utils.moneyHtml((item.price || 0) * (item.qty || 1))}</span>
         </div>
       `).join(''));
 
@@ -159,7 +163,7 @@
         $('#printStudent').text(order.studentName);
         $('#printClass').text(order.classroom || order.className || '—');
         $('#printTime').text(Utils.formatTime(order.orderTime));
-        $('#printTotal').text(Utils.money(order.total));
+        $('#printTotal').html(Utils.moneyHtml(order.total));
         $('#printItems').html($('#odItems').html());
       }
 

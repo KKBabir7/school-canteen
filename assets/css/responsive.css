@@ -13,10 +13,6 @@
 }
 
 @media (max-width: 991.98px) {
-  .sidebar-toggle {
-    display: inline-flex;
-  }
-
   .app-sidebar {
     transform: translateX(-100%);
   }
@@ -29,7 +25,31 @@
     margin-left: 0;
   }
 
-  .user-menu-btn span {
+  body.sidebar-collapsed .app-sidebar {
+    width: var(--sidebar-width);
+  }
+
+  body.sidebar-collapsed .app-main {
+    margin-left: 0;
+  }
+
+  body.sidebar-collapsed .sidebar-brand-text,
+  body.sidebar-collapsed .sidebar-label,
+  body.sidebar-collapsed .nav-link-app span,
+  body.sidebar-collapsed .sidebar-user-meta {
+    display: block;
+  }
+
+  body.sidebar-collapsed .nav-link-app {
+    justify-content: flex-start;
+    padding: 0.7rem 0.9rem;
+  }
+
+  .user-menu-copy {
+    display: none;
+  }
+
+  .user-menu-caret {
     display: none;
   }
 
@@ -96,6 +116,11 @@
     display: none;
   }
 
+  .school-card-list.d-none {
+    display: block !important;
+    padding: 1rem;
+  }
+
   .mobile-card-list {
     display: flex;
     flex-direction: column;
@@ -135,8 +160,24 @@
     align-items: stretch;
   }
 
-  .order-card-main {
-    gap: 0.85rem;
+  .order-card-main,
+  .order-card-main--cm,
+  .order-card-main--student {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 0.85rem;
+    row-gap: 0.75rem;
+  }
+
+  .order-number {
+    grid-column: 1 / -1;
+  }
+
+  .order-card-status {
+    justify-self: start;
+  }
+
+  .order-card-chevron {
+    display: none;
   }
 
   .order-actions {
@@ -210,18 +251,35 @@
     grid-template-columns: 1fr;
   }
 
-  .role-switcher .dropdown-toggle span.role-label {
+  .role-chips span {
     max-width: 90px;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
+  .status-stepper {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+  }
+
+  .status-step {
+    padding: 0 0.15rem;
+  }
+
   .status-step-label {
-    font-size: 0.65rem;
+    font-size: 0.68rem;
   }
 
   .status-step-dot {
     width: 28px;
     height: 28px;
+    font-size: 0.7rem;
+    box-shadow: 0 0 0 3px #fff;
+  }
+
+  .status-step.active .status-step-dot {
+    box-shadow:
+      0 0 0 3px #fff,
+      0 0 0 6px rgba(49, 77, 99, 0.18);
   }
 }

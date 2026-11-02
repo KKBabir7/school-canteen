@@ -157,13 +157,16 @@
       return `
         <div class="menu-card" data-id="${menu.id}" data-aos="fade-up" role="button" tabindex="0"
              aria-label="${name}">
+          <div class="menu-card-accent" aria-hidden="true"></div>
           <div class="menu-card-top">
-            <div>
-              <h3>${name}</h3>
+            <div class="menu-card-heading">
+              <div class="menu-card-title-row">
+                <h3>${name}</h3>
+                ${this.renderStatusBadge(menu.status)}
+              </div>
               <p class="menu-desc">${desc}</p>
             </div>
-            <div class="d-flex align-items-center gap-2">
-              ${this.renderStatusBadge(menu.status)}
+            <div class="menu-card-actions">
               ${options.actions !== false ? this.renderActionMenu('menu', menu.id, [
                 { action: 'view', label: I18n.t('view'), icon: 'bi-eye' },
                 { action: 'edit', label: I18n.t('edit'), icon: 'bi-pencil' },
@@ -179,8 +182,8 @@
           <div class="menu-meta">
             <span><i class="bi bi-layers" aria-hidden="true"></i> ${sectionCount} ${I18n.t('sections').toLowerCase()}</span>
             <span><i class="bi bi-egg-fried" aria-hidden="true"></i> ${itemCount} ${I18n.t('items').toLowerCase()}</span>
-            <span><i class="bi bi-shop" aria-hidden="true"></i> ${assigned}</span>
-            <span>${this.renderStatusBadge(menu.availability === 'available' ? 'available' : 'unavailable')}</span>
+            <span><i class="bi bi-shop" aria-hidden="true"></i> ${assigned} canteen${assigned === 1 ? '' : 's'}</span>
+            <span class="menu-meta-avail">${this.renderStatusBadge(menu.availability === 'available' ? 'available' : 'unavailable')}</span>
             <span><i class="bi bi-clock" aria-hidden="true"></i> ${Utils.formatRelative(menu.lastUpdated)}</span>
           </div>
         </div>
@@ -224,10 +227,14 @@
         actionBtn = `<button type="button" class="btn-app btn-primary-app btn-sm-app btn-order-action" data-action="complete" data-id="${order.id}">${I18n.t('completeOrder')}</button>`;
       }
 
+      const itemLines = (order.items || []).slice(0, 3).map((i) =>
+        `${i.qty || 1} × ${Utils.localized(i.name || {})}`
+      ).join('<br>');
+
       return `
         <div class="order-card" data-id="${order.id}" data-aos="fade-up" role="button" tabindex="0"
              aria-label="#${order.orderNumber}">
-          <div class="order-card-main">
+          <div class="order-card-main order-card-main--cm">
             <div class="order-number">#${order.orderNumber}</div>
             <div class="order-student">
               <strong>${order.studentName}</strong>
@@ -235,14 +242,17 @@
             </div>
             <div class="order-meta-item">
               <strong>${I18n.t('today')}</strong>
-              ${Utils.formatTime(order.orderTime)}
+              <span class="meta-value">${Utils.formatTime(order.orderTime)}</span>
             </div>
             <div class="order-meta-item">
               <strong>${I18n.t('items')}</strong>
-              ${itemCount}
+              <span class="meta-value">${itemCount}${itemLines ? ` · ${itemLines.replace(/<br>/g, ', ')}` : ''}</span>
             </div>
-            <div class="order-total">${Utils.money(order.total)}</div>
-            ${this.renderStatusBadge(order.status)}
+            <div class="order-meta-item">
+              <strong>${I18n.t('total')}</strong>
+              <span class="meta-value order-total">${Utils.money(order.total)}</span>
+            </div>
+            <div class="order-card-status">${this.renderStatusBadge(order.status)}</div>
           </div>
           <div class="order-actions">
             ${actionBtn}
@@ -286,27 +296,23 @@
 
     renderStatusStepper(currentStatus) {
       const steps = ['new', 'preparing', 'ready', 'completed'];
-      const currentIdx = steps.indexOf(currentStatus);
+      const currentIdx = Math.max(0, steps.indexOf(currentStatus));
 
       return `
-        <div class="status-stepper" role="list" aria-label="Order status progress">
+        <ol class="status-stepper" aria-label="Order status progress">
           ${steps.map((step, i) => {
-            let cls = '';
+            let cls = 'pending';
             if (i < currentIdx) cls = 'completed';
             else if (i === currentIdx) cls = 'active';
-            const line = i < steps.length - 1 ? `<div class="status-step-line" aria-hidden="true"></div>` : '';
             return `
-              <div class="status-step ${cls}" role="listitem" aria-current="${i === currentIdx ? 'step' : 'false'}">
-                <div class="status-step-node">
-                  <div class="status-step-dot">
-                    ${i < currentIdx ? '<i class="bi bi-check" aria-hidden="true"></i>' : (i + 1)}
-                  </div>
-                  <span class="status-step-label">${I18n.statusLabel(step)}</span>
-                </div>
-                ${line}
-              </div>`;
+              <li class="status-step ${cls}" aria-current="${i === currentIdx ? 'step' : 'false'}">
+                <span class="status-step-dot" aria-hidden="true">
+                  ${i < currentIdx ? '<i class="bi bi-check-lg"></i>' : (i + 1)}
+                </span>
+                <span class="status-step-label">${I18n.statusLabel(step)}</span>
+              </li>`;
           }).join('')}
-        </div>`;
+        </ol>`;
     },
 
     initializeSelect2($el, options) {
@@ -370,11 +376,18 @@
       return Utils.query(name);
     },
 
-    setActiveTab(tabId) {
-      $('.tabs-app .tab-btn').removeClass('active').attr('aria-selected', 'false');
-      $('.tab-panel').removeClass('active');
-      $(`.tabs-app .tab-btn[data-tab="${tabId}"]`).addClass('active').attr('aria-selected', 'true');
-      $(`#panel-${tabId}`).addClass('active');
+    setActiveTab(tabId, $fromBtn) {
+      const $group = $fromBtn && $fromBtn.length
+        ? $fromBtn.closest('.tabs-app')
+        : $('.tabs-app').first();
+      $group.find('.tab-btn').removeClass('active').attr('aria-selected', 'false');
+      $group.find(`.tab-btn[data-tab="${tabId}"]`).addClass('active').attr('aria-selected', 'true');
+      const $panel = $('#panel-' + tabId);
+      if ($panel.length) {
+        const $scope = $panel.parent();
+        $scope.children('.tab-panel').removeClass('active');
+        $panel.addClass('active');
+      }
     }
   };
 
@@ -385,7 +398,10 @@
     Components.initializeAnimations();
 
     $(document).on('click', '.tabs-app .tab-btn', function () {
-      Components.setActiveTab($(this).data('tab'));
+      const $btn = $(this);
+      // List-filter tabs (orders / CM menus) manage their own UI
+      if ($btn.closest('#fpOrderTabs, #cmMenuTabs, .order-tabs').length) return;
+      Components.setActiveTab($btn.data('tab'), $btn);
     });
 
     document.addEventListener('langchange', () => {

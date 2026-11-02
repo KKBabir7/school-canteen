@@ -31,8 +31,9 @@
           </ol>
         </nav>
 
-        <div class="page-header">
+        <div class="page-header page-header--panel">
           <div class="page-header-text">
+            <p class="page-kicker"><i class="bi bi-pencil-square" aria-hidden="true"></i> Menu editor</p>
             <h1 data-i18n="createMenu">Create Menu</h1>
             <p data-i18n="menusDesc">Create and manage menus available across your canteens.</p>
           </div>
@@ -45,7 +46,7 @@
         <div class="menu-builder-layout">
           <div>
             <div class="card-app mb-4" data-aos="fade-up">
-              <div class="card-app-header"><h3 data-i18n="menus">Menu Information</h3></div>
+              <div class="card-app-header"><h3><i class="bi bi-info-circle" aria-hidden="true"></i> <span data-i18n="menus">Menu Information</span></h3></div>
               <div class="card-app-body">
                 <div class="row g-3">
                   <div class="col-md-6 form-group-app">
@@ -64,9 +65,9 @@
                     <label class="form-label-app" for="menuDescAr" data-i18n="descAr">Description — Arabic</label>
                     <textarea id="menuDescAr" class="form-control-app" rows="2" dir="rtl"></textarea>
                   </div>
-                  <div class="col-12 form-group-app mb-0">
+                  <div class="col-md-6 form-group-app mb-0">
                     <label class="form-label-app" for="menuStatus" data-i18n="status">Status</label>
-                    <select id="menuStatus" class="form-select-app">
+                    <select id="menuStatus" class="select2-field" data-placeholder="Select status">
                       <option value="draft" data-i18n="draft">Draft</option>
                       <option value="active" data-i18n="active">Active</option>
                     </select>
@@ -88,12 +89,18 @@
     </div>
   </div>
 
-  <div class="modal fade modal-app" id="addSectionModal" tabindex="-1">
+  <div class="modal fade modal-app" id="addSectionModal" tabindex="-1" aria-labelledby="addSectionModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h2 class="modal-title" data-i18n="addSection">Add Section</h2>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <div class="modal-title-wrap">
+            <span class="modal-title-icon" aria-hidden="true"><i class="bi bi-layout-text-sidebar-reverse"></i></span>
+            <div>
+              <h2 class="modal-title" id="addSectionModalLabel" data-i18n="addSection">Add Section</h2>
+              <p class="modal-subtitle">Group items under a bilingual section title</p>
+            </div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="form-group-app">
@@ -113,17 +120,23 @@
     </div>
   </div>
 
-  <div class="modal fade modal-app" id="addItemModal" tabindex="-1">
+  <div class="modal fade modal-app" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h2 class="modal-title" data-i18n="addItem">Add Item</h2>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <div class="modal-title-wrap">
+            <span class="modal-title-icon" aria-hidden="true"><i class="bi bi-plus-circle"></i></span>
+            <div>
+              <h2 class="modal-title" id="addItemModalLabel" data-i18n="addItem">Add Item</h2>
+              <p class="modal-subtitle">Pick a product and set the menu price</p>
+            </div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="form-group-app">
             <label class="form-label-app" for="itemProductSelect" data-i18n="searchProducts">Search Products</label>
-            <select id="itemProductSelect" class="select2-field"></select>
+            <select id="itemProductSelect" class="select2-field" data-placeholder="Search products" data-allow-clear="true"></select>
           </div>
           <button type="button" class="btn-app btn-outline-app btn-sm-app mb-3" id="btnShowCreateProduct">
             <i class="bi bi-plus-lg"></i> <span data-i18n="createProduct">Create New Product</span>
@@ -141,12 +154,18 @@
     </div>
   </div>
 
-  <div class="modal fade modal-app" id="newProductModal" tabindex="-1">
+  <div class="modal fade modal-app" id="newProductModal" tabindex="-1" aria-labelledby="newProductModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h2 class="modal-title" data-i18n="createProduct">Create New Product</h2>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <div class="modal-title-wrap">
+            <span class="modal-title-icon" aria-hidden="true"><i class="bi bi-box-seam"></i></span>
+            <div>
+              <h2 class="modal-title" id="newProductModalLabel" data-i18n="createProduct">Create New Product</h2>
+              <p class="modal-subtitle">Add a bilingual product to your catalog</p>
+            </div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="form-group-app">
@@ -188,6 +207,7 @@
   <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/session.js"></script>
   <script src="../assets/js/utils.js"></script>
   <script src="../assets/js/translations.js"></script>
   <script src="../assets/js/mock-data.js"></script>

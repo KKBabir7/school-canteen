@@ -59,6 +59,66 @@
         email: 'super@schoolfood.app',
         avatarKey: 'admin'
       }
+    },
+    /**
+     * Demo personas (landing only). One person can hold multiple roles —
+     * in-app sidebar menus turn on/off from session.roles (no role switcher).
+     */
+    personas: {
+      'david-fp-cm': {
+        id: 'usr-fp-1',
+        name: 'David Cohen',
+        email: 'david@freshbites.co',
+        avatarKey: 'david',
+        roles: ['food-provider', 'canteen-manager'],
+        home: 'food-provider/dashboard.html',
+        canteenId: 'can-1'
+      },
+      'nora-parent-cm': {
+        id: 'usr-par-1',
+        name: 'Nora Ahmed',
+        email: 'nora@example.com',
+        avatarKey: 'nora',
+        roles: ['parent', 'canteen-manager'],
+        home: 'parent/home.html',
+        canteenId: 'can-1',
+        parentId: 'usr-par-1'
+      },
+      'layla-cm': {
+        id: 'usr-cm-1',
+        name: 'Layla Hassan',
+        email: 'layla@rosary.edu',
+        avatarKey: 'layla',
+        roles: ['canteen-manager'],
+        home: 'canteen-manager/dashboard.html',
+        canteenId: 'can-1'
+      },
+      'sarah-student': {
+        id: 'usr-stu-1',
+        name: 'Sarah Ahmed',
+        email: 'sarah.student@rosary.edu',
+        avatarKey: 'sarah',
+        roles: ['student'],
+        home: 'student/home.html',
+        childId: 'child-1'
+      },
+      'miriam-sa': {
+        id: 'usr-sa-1',
+        name: 'Principal Miriam',
+        email: 'admin@rosary.edu',
+        avatarKey: 'miriam',
+        roles: ['school-admin'],
+        home: 'school-admin/dashboard.html',
+        schoolId: 'sch-1'
+      },
+      'platform-su': {
+        id: 'usr-su-1',
+        name: 'Platform Admin',
+        email: 'super@schoolfood.app',
+        avatarKey: 'admin',
+        roles: ['super-admin'],
+        home: 'super-admin/schools.html'
+      }
     }
   };
 })(window);

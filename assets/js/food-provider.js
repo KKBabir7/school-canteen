@@ -14,7 +14,7 @@
       ]);
 
       const user = APP_CONFIG.roles.foodProvider;
-      $('#welcomeTitle').text(`${Utils.greeting()}, ${user.name.split(' ')[0]} 👋`);
+      $('#welcomeTitle').text(`${Utils.greeting()}, ${user.name.split(' ')[0]}`);
 
       Components.animateCountUp('#statTotalCanteens', canteens.length);
       Components.animateCountUp('#statActiveCanteens', canteens.filter((c) => c.status === 'active').length);
@@ -252,7 +252,9 @@
       this.bindCanteenDetailSettings(canteen);
       this.bindAssignModal();
 
-      $('#btnAssignFromDetail').on('click', () => this.openAssignModal(null, [canteen.id]));
+      $('#btnAssignFromDetail').off('click.assignDetail').on('click.assignDetail', () => {
+        this.openAssignModal(null, [canteen.id]);
+      });
 
       if (location.hash === '#settings') Components.setActiveTab('settings');
     },
@@ -267,18 +269,25 @@
           $el.html(`<p class="text-muted mb-0">${I18n.t('noMenus')}</p>`);
           return;
         }
-        $el.html(list.map((m) => `
-          <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-            <div>
-              <strong>${Utils.localized(m.name)}</strong>
-              ${Components.renderStatusBadge(m.status)}
+        $el.html(`<div class="assigned-menu-list">${list.map((m) => `
+          <div class="assigned-menu-row">
+            <div class="assigned-menu-info">
+              <span class="assigned-menu-icon" aria-hidden="true"><i class="bi bi-journal-text"></i></span>
+              <div>
+                <strong>${Utils.localized(m.name)}</strong>
+                <div class="assigned-menu-meta">${Components.renderStatusBadge(m.status)}</div>
+              </div>
             </div>
-            <div class="d-flex gap-1">
-              <a href="menu-editor.html?id=${m.id}" class="btn-app btn-ghost-app btn-sm-app">${I18n.t('edit')}</a>
-              <button type="button" class="btn-app btn-ghost-app btn-sm-app btn-unassign-menu" data-menu="${m.id}">${I18n.t('delete')}</button>
+            <div class="assigned-menu-actions">
+              <a href="menu-editor.html?id=${m.id}" class="btn-app btn-outline-app btn-sm-app">
+                <i class="bi bi-pencil" aria-hidden="true"></i> ${I18n.t('edit')}
+              </a>
+              <button type="button" class="btn-app btn-ghost-app btn-sm-app btn-unassign-menu" data-menu="${m.id}">
+                <i class="bi bi-x-lg" aria-hidden="true"></i> ${I18n.t('delete')}
+              </button>
             </div>
           </div>
-        `).join(''));
+        `).join('')}</div>`);
       };
 
       renderList(assigned, $('#overviewMenus'));
@@ -419,20 +428,30 @@
       ]);
 
       const $menuSel = $('#assignMenuSelect');
+      const $canSel = $('#assignCanteensSelect');
+      const $status = $('#assignStatus');
+
+      [$menuSel, $canSel, $status].forEach(($el) => {
+        if ($el.hasClass('select2-hidden-accessible')) $el.select2('destroy');
+      });
+
       $menuSel.empty().append('<option value=""></option>');
       menus.forEach((m) => {
         $menuSel.append(`<option value="${m.id}">${Utils.localized(m.name)}</option>`);
       });
 
-      const $canSel = $('#assignCanteensSelect');
       $canSel.empty();
       canteens.forEach((c) => {
         $canSel.append(`<option value="${c.id}">${c.name}</option>`);
       });
 
-      if (menuId) $menuSel.val(menuId);
-      if (canteenIds && canteenIds.length) $canSel.val(canteenIds);
+      if (menuId) $menuSel.val(String(menuId));
+      if (canteenIds && canteenIds.length) $canSel.val(canteenIds.map(String));
+      $status.val('active');
+      $('#assignDateRange').prop('checked', false);
+      $('#assignDateFields').prop('hidden', true);
 
+      $modal.data('prefill', { menuId: menuId || null, canteenIds: canteenIds || [] });
       bootstrap.Modal.getOrCreateInstance($modal[0]).show();
     },
 
@@ -444,15 +463,21 @@
       Forms.initSelect2InModal($modal);
 
       $('#assignDateRange').on('change', function () {
-        $('#assignDateFields').toggle(this.checked);
+        $('#assignDateFields').prop('hidden', !this.checked);
       });
 
-      if (typeof flatpickr !== 'undefined') {
-        $modal.on('shown.bs.modal', () => {
-          Forms.initFlatpickr('#assignFrom');
-          Forms.initFlatpickr('#assignTo');
-        });
-      }
+      $modal.on('shown.bs.modal.assignPrefill', function () {
+        const prefill = $modal.data('prefill') || {};
+        const $menuSel = $('#assignMenuSelect');
+        const $canSel = $('#assignCanteensSelect');
+        if (prefill.menuId) $menuSel.val(String(prefill.menuId)).trigger('change');
+        if (prefill.canteenIds && prefill.canteenIds.length) {
+          $canSel.val(prefill.canteenIds.map(String)).trigger('change');
+        }
+        $('#assignStatus').val('active').trigger('change');
+        Forms.initFlatpickr('#assignFrom');
+        Forms.initFlatpickr('#assignTo');
+      });
 
       $('#btnConfirmAssign').off('click').on('click', async () => {
         const menuId = $('#assignMenuSelect').val();
@@ -492,8 +517,18 @@
 
     initSettingsPage() {
       const acc = (Storage.get('settings') || {}).foodProvider?.account || APP_CONFIG.roles.foodProvider;
-      $('#fpAccountName').val(acc.name || APP_CONFIG.roles.foodProvider.name);
-      $('#fpAccountEmail').val(acc.email || APP_CONFIG.roles.foodProvider.email);
+      const name = acc.name || APP_CONFIG.roles.foodProvider.name;
+      const email = acc.email || APP_CONFIG.roles.foodProvider.email;
+      $('#fpAccountName').val(name);
+      $('#fpAccountEmail').val(email);
+      $('#fpProfileName').text(name);
+      $('#fpProfileEmail').text(email);
+
+      const syncPreview = () => {
+        $('#fpProfileName').text(($('#fpAccountName').val() || '').trim() || name);
+        $('#fpProfileEmail').text(($('#fpAccountEmail').val() || '').trim() || email);
+      };
+      $('#fpAccountName, #fpAccountEmail').on('input', syncPreview);
 
       $('#btnChangePassword').on('click', () => {
         Components.showSuccess(I18n.t('success'), 'Password updated (demo)');
@@ -507,6 +542,7 @@
           email: $('#fpAccountEmail').val()
         };
         Storage.set('settings', settings);
+        syncPreview();
         Components.showSuccess(I18n.t('success'), I18n.t('saveChanges'));
       });
     }

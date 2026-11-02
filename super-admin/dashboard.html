@@ -4,57 +4,138 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard | Super Admin | SchoolFood</title>
-  <meta name="description" content="Super admin dashboard — schools overview.">
+  <meta name="description" content="Platform overview for all schools.">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
   <link href="../assets/css/style.css" rel="stylesheet">
   <link href="../assets/css/dashboard.css" rel="stylesheet">
   <link href="../assets/css/components.css" rel="stylesheet">
   <link href="../assets/css/forms.css" rel="stylesheet">
+  <link href="../assets/css/ordering.css" rel="stylesheet">
   <link href="../assets/css/rtl.css" rel="stylesheet">
   <link href="../assets/css/responsive.css" rel="stylesheet">
 </head>
 <body>
-  <div class="app-shell"><div class="app-main"><div class="app-content">
-    <div class="page-header">
-      <div class="page-header-text">
-        <h1 data-i18n="dashboard">Dashboard</h1>
-        <p data-i18n="welcomeSuperAdmin">Platform overview for all schools.</p>
-      </div>
-      <a href="schools.html" class="btn-app btn-primary-app" data-i18n="schools">Schools</a>
-    </div>
+  <div class="app-shell">
+    <div class="app-main">
+      <div class="app-content">
+        <nav aria-label="Breadcrumb">
+          <ol class="breadcrumb-app">
+            <li><span class="current" data-i18n="dashboard">Dashboard</span></li>
+          </ol>
+        </nav>
 
-    <div class="stat-grid">
-      <div class="stat-card" data-aos="fade-up">
-        <div class="stat-card-label"><span data-i18n="totalSchools">Total schools</span></div>
-        <div class="stat-card-value" id="suTotal">0</div>
-      </div>
-      <div class="stat-card" data-aos="fade-up">
-        <div class="stat-card-label"><span data-i18n="active">Active</span></div>
-        <div class="stat-card-value" id="suActive">0</div>
-      </div>
-      <div class="stat-card" data-aos="fade-up">
-        <div class="stat-card-label"><span data-i18n="inactive">Inactive</span></div>
-        <div class="stat-card-value" id="suInactive">0</div>
+        <div class="page-header page-header--panel" data-aos="fade-up">
+          <div class="page-header-text">
+            <p class="page-kicker"><i class="bi bi-shield-lock" aria-hidden="true"></i> Super Admin</p>
+            <h1 data-i18n="dashboard">Dashboard</h1>
+            <p data-i18n="welcomeSuperAdmin">Platform overview for all schools.</p>
+          </div>
+          <div class="page-actions">
+            <a href="schools.html" class="btn-app btn-primary-app">
+              <i class="bi bi-building" aria-hidden="true"></i>
+              <span data-i18n="schools">Schools</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="stat-grid parent-home-stats" data-aos="fade-up">
+          <div class="stat-card stat-card--navy">
+            <div class="stat-card-label">
+              <span data-i18n="totalSchools">Total schools</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-building"></i></span>
+            </div>
+            <div class="stat-card-value" id="suTotal">0</div>
+          </div>
+          <div class="stat-card stat-card--teal">
+            <div class="stat-card-label">
+              <span data-i18n="active">Active</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-check2-circle"></i></span>
+            </div>
+            <div class="stat-card-value" id="suActive">0</div>
+          </div>
+          <div class="stat-card stat-card--coral">
+            <div class="stat-card-label">
+              <span data-i18n="inactive">Inactive</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-pause-circle"></i></span>
+            </div>
+            <div class="stat-card-value" id="suInactive">0</div>
+          </div>
+          <div class="stat-card stat-card--sky">
+            <div class="stat-card-label">
+              <span data-i18n="canteens">Canteens</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-shop-window"></i></span>
+            </div>
+            <div class="stat-card-value" id="suCanteens">0</div>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-lg-8">
+            <div class="card-app" data-aos="fade-up">
+              <div class="card-app-header">
+                <h3><i class="bi bi-building" aria-hidden="true"></i> <span data-i18n="schools">Schools</span></h3>
+                <a href="schools.html" class="btn-app btn-outline-app btn-sm-app" data-i18n="view">View</a>
+              </div>
+              <div class="card-app-body p-0">
+                <div class="table-responsive">
+                  <table class="table-app mb-0">
+                    <thead>
+                      <tr>
+                        <th data-i18n="name">Name</th>
+                        <th data-i18n="city">City</th>
+                        <th data-i18n="status">Status</th>
+                        <th class="text-end" data-i18n="actions">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="suDashSchools"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="card-app" data-aos="fade-up">
+              <div class="card-app-header">
+                <h3><i class="bi bi-lightning-charge" aria-hidden="true"></i> <span data-i18n="quickActions">Quick actions</span></h3>
+              </div>
+              <div class="card-app-body d-grid gap-2">
+                <a href="schools.html" class="btn-app btn-outline-app">
+                  <i class="bi bi-building" aria-hidden="true"></i>
+                  <span data-i18n="manageSchools">Manage schools</span>
+                </a>
+                <a href="schools.html#add" class="btn-app btn-primary-app" id="dashAddSchool">
+                  <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                  <span data-i18n="addSchool">Add School</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div></div></div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/session.js"></script>
   <script src="../assets/js/utils.js"></script>
   <script src="../assets/js/mock-data.js"></script>
   <script src="../assets/js/translations.js"></script>
+  <script src="../assets/js/services/canteen-service.js"></script>
   <script src="../assets/js/services/school-service.js"></script>
   <script src="../assets/js/components.js"></script>
+  <script src="../assets/js/forms.js"></script>
   <script src="../assets/js/navigation.js"></script>
   <script src="../assets/js/app.js"></script>
   <script src="../assets/js/super-admin.js"></script>
-  <script>$(function(){ SuperAdminApp.initDashboard(); });</script>
+  <script>$(function () { SuperAdminApp.initDashboard(); });</script>
 </body>
 </html>

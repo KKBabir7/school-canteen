@@ -6,13 +6,16 @@
 
   const CanteenManager = {
     getCanteenId() {
+      if (typeof Session !== 'undefined' && Session.profile() && Session.profile().canteenId) {
+        return Session.profile().canteenId;
+      }
       return APP_CONFIG.roles.canteenManager.canteenId;
     },
 
     async initDashboard() {
       const canteenId = this.getCanteenId();
-      const user = APP_CONFIG.roles.canteenManager;
-      $('#cmWelcome').text(`${Utils.greeting()}, ${user.name.split(' ')[0]} 👋`);
+      const user = (typeof Session !== 'undefined' && Session.profile()) || APP_CONFIG.roles.canteenManager;
+      $('#cmWelcome').text(`${Utils.greeting()}, ${user.name.split(' ')[0]}`);
 
       const counts = await OrderService.getCounts(canteenId);
       Components.animateCountUp('#statTodayOrders', counts.today);
@@ -116,8 +119,10 @@
     async initMyMenu() {
       const canteenId = this.getCanteenId();
       const menus = await MenuService.getForCanteen(canteenId);
-      const today = menus.filter((m) => m.status === 'active');
-      const upcoming = menus.filter((m) => m.status !== 'active' || m.availability === 'unavailable');
+      const dow = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][new Date().getDay()];
+      const today = menus.filter((m) =>
+        m.status === 'active' && (!(m.weekdays || []).length || (m.weekdays || []).includes(dow)));
+      const upcoming = menus.filter((m) => !today.find((t) => t.id === m.id));
 
       const renderGrid = ($el, list) => {
         if (!list.length) {
@@ -134,6 +139,19 @@
 
       renderGrid($('#todayMenus'), today);
       renderGrid($('#upcomingMenus'), upcoming);
+
+      $('#cmMenuTabs').off('click.cmTab').on('click.cmTab', '.tab-btn', function () {
+        $('#cmMenuTabs .tab-btn').removeClass('active');
+        $(this).addClass('active');
+        const tab = $(this).data('tab');
+        if (tab === 'upcoming') {
+          $('#todayMenus').hide();
+          $('#upcomingMenus').show();
+        } else {
+          $('#upcomingMenus').hide();
+          $('#todayMenus').show();
+        }
+      });
 
       const menuParam = Components.getQueryParam('menu');
       if (menuParam) this.showMenuDetail(menuParam);
@@ -242,7 +260,7 @@
           <div class="row g-2">
             <div class="col-md-4 form-group-app">
               <label class="form-label-app">${I18n.t('reason')}</label>
-              <select class="form-select-app unavail-reason select2-field" data-placeholder="${I18n.t('reason')}">
+              <select class="select2-field unavail-reason" data-placeholder="${I18n.t('reason')}">
                 <option value="out_of_stock">${I18n.t('outOfStock')}</option>
                 <option value="sold_out">${I18n.t('soldOut')}</option>
                 <option value="temp">${I18n.t('tempUnavailable')}</option>
@@ -251,7 +269,7 @@
             </div>
             <div class="col-md-4 form-group-app">
               <label class="form-label-app">${I18n.t('dateRange')}</label>
-              <select class="form-select-app unavail-duration">
+              <select class="select2-field unavail-duration" data-placeholder="${I18n.t('dateRange')}">
                 <option value="today">${I18n.t('onlyToday')}</option>
                 <option value="range">${I18n.t('dateRange')}</option>
                 <option value="until">${I18n.t('untilOn')}</option>
@@ -266,7 +284,8 @@
 
     initUnavailPanel(menuId, itemId) {
       const $panel = $('#unavail-' + itemId);
-      Components.initializeSelect2($panel.find('.unavail-reason'), { minimumResultsForSearch: Infinity });
+      Forms.initSelect2($panel.find('.unavail-reason'), { minimumResultsForSearch: Infinity });
+      Forms.initSelect2($panel.find('.unavail-duration'), { minimumResultsForSearch: Infinity });
 
       $panel.find('.btn-confirm-unavail').on('click', async () => {
         await MenuService.updateItemAvailability(menuId, itemId, {
@@ -320,12 +339,23 @@
       const settings = Storage.get('settings') || Utils.clone(SchoolFoodSeed.settings);
       const cm = settings.canteenManager || SchoolFoodSeed.settings.canteenManager;
 
+      const syncCanteenPreview = () => {
+        const active = $('#setCanteenActive').is(':checked');
+        $('#cmProfileCanteen').text(($('#setCanteenName').val() || '').trim() || (canteen && canteen.name) || 'Canteen');
+        $('#cmProfileEmail').text(($('#setCanteenEmail').val() || '').trim() || '—');
+        $('#cmProfilePhone').text(($('#setCanteenPhone').val() || '').trim() || '—');
+        $('#cmProfileStatus').text(active ? I18n.t('active') : I18n.t('inactive'));
+      };
+
       if (canteen) {
         $('#setCanteenName').val(canteen.name);
         $('#setCanteenPhone').val(canteen.phone);
         $('#setCanteenEmail').val(canteen.email);
         $('#setCanteenActive').prop('checked', canteen.status === 'active');
+        syncCanteenPreview();
       }
+
+      $('#setCanteenName, #setCanteenPhone, #setCanteenEmail, #setCanteenActive').on('input change', syncCanteenPreview);
 
       const ord = cm.ordering || {};
       $('#setAllowSameDay').prop('checked', ord.allowSameDay !== false);
@@ -371,6 +401,7 @@
           dailySummary: $('#setNotifSummary').is(':checked')
         };
         Storage.set('settings', s);
+        syncCanteenPreview();
         Components.showSuccess(I18n.t('success'), I18n.t('saveChanges'));
       });
 

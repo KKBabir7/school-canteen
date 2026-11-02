@@ -20,6 +20,14 @@
       return cur + n.toFixed(n % 1 === 0 ? 0 : 2);
     },
 
+    /** HTML money with a font-safe currency glyph (use with .html(), not .text()). */
+    moneyHtml(amount) {
+      const cur = (global.APP_CONFIG && global.APP_CONFIG.currency) || '₪';
+      const n = Number(amount);
+      const val = isNaN(n) ? '0' : n.toFixed(n % 1 === 0 ? 0 : 2);
+      return `<span class="app-money"><span class="app-money__cur">${cur}</span>${val}</span>`;
+    },
+
     formatTime(iso) {
       if (!iso) return '—';
       if (/^\d{1,2}:\d{2}/.test(String(iso))) return iso;

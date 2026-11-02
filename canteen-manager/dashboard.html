@@ -29,28 +29,28 @@
         </div>
 
         <div class="stat-grid">
-          <div class="stat-card"><div class="stat-card-label" data-i18n="todayOrders">Today's Orders</div><div class="stat-card-value" id="statTodayOrders">0</div></div>
-          <div class="stat-card"><div class="stat-card-label" data-i18n="newOrders">New Orders</div><div class="stat-card-value" id="statNewOrders">0</div></div>
-          <div class="stat-card"><div class="stat-card-label" data-i18n="preparing">Preparing</div><div class="stat-card-value" id="statPreparing">0</div></div>
-          <div class="stat-card"><div class="stat-card-label" data-i18n="ready">Ready</div><div class="stat-card-value" id="statReady">0</div></div>
-          <div class="stat-card"><div class="stat-card-label" data-i18n="revenue">Today's Revenue</div><div class="stat-card-value" id="statRevenue">0</div></div>
-          <div class="stat-card"><div class="stat-card-label" data-i18n="availableItems">Available Items</div><div class="stat-card-value" id="statAvailableItems">0</div></div>
+          <div class="stat-card stat-card--navy" data-aos="fade-up"><div class="stat-card-label"><span data-i18n="todayOrders">Today's Orders</span><span class="stat-card-icon" aria-hidden="true"><i class="bi bi-bag"></i></span></div><div class="stat-card-value" id="statTodayOrders">0</div></div>
+          <div class="stat-card stat-card--coral" data-aos="fade-up"><div class="stat-card-label"><span data-i18n="newOrders">New Orders</span><span class="stat-card-icon" aria-hidden="true"><i class="bi bi-bell"></i></span></div><div class="stat-card-value" id="statNewOrders">0</div></div>
+          <div class="stat-card stat-card--sky" data-aos="fade-up"><div class="stat-card-label"><span data-i18n="preparing">Preparing</span><span class="stat-card-icon" aria-hidden="true"><i class="bi bi-hourglass-split"></i></span></div><div class="stat-card-value" id="statPreparing">0</div></div>
+          <div class="stat-card stat-card--teal" data-aos="fade-up"><div class="stat-card-label"><span data-i18n="ready">Ready</span><span class="stat-card-icon" aria-hidden="true"><i class="bi bi-check2-circle"></i></span></div><div class="stat-card-value" id="statReady">0</div></div>
+          <div class="stat-card stat-card--navy" data-aos="fade-up"><div class="stat-card-label"><span data-i18n="revenue">Today's Revenue</span><span class="stat-card-icon" aria-hidden="true"><i class="bi bi-cash-coin"></i></span></div><div class="stat-card-value" id="statRevenue">0</div></div>
+          <div class="stat-card stat-card--teal" data-aos="fade-up"><div class="stat-card-label"><span data-i18n="availableItems">Available Items</span><span class="stat-card-icon" aria-hidden="true"><i class="bi bi-egg-fried"></i></span></div><div class="stat-card-value" id="statAvailableItems">0</div></div>
         </div>
 
         <div class="row g-4">
           <div class="col-lg-8">
-            <div class="card-app mb-4">
-              <div class="card-app-header"><h3 data-i18n="todayMenu">Today's Menu</h3><a href="my-menu.html" class="btn-app btn-outline-app btn-sm-app" data-i18n="manageMenu">Manage</a></div>
+            <div class="card-app mb-4" data-aos="fade-up">
+              <div class="card-app-header"><h3><i class="bi bi-journal-richtext" aria-hidden="true"></i> <span data-i18n="todayMenu">Today's Menu</span></h3><a href="my-menu.html" class="btn-app btn-outline-app btn-sm-app" data-i18n="manageMenu">Manage</a></div>
               <div class="card-app-body"><div class="food-grid" id="todayMenuGrid"></div></div>
             </div>
-            <div class="card-app">
-              <div class="card-app-header"><h3 data-i18n="orders">Recent Orders</h3><a href="orders.html" class="btn-app btn-outline-app btn-sm-app" data-i18n="viewOrders">View Orders</a></div>
+            <div class="card-app" data-aos="fade-up">
+              <div class="card-app-header"><h3><i class="bi bi-bag-check" aria-hidden="true"></i> <span data-i18n="orders">Recent Orders</span></h3><a href="orders.html" class="btn-app btn-outline-app btn-sm-app" data-i18n="viewOrders">View Orders</a></div>
               <div class="card-app-body" id="todayOrdersSummary"></div>
             </div>
           </div>
           <div class="col-lg-4">
-            <div class="card-app">
-              <div class="card-app-header"><h3 data-i18n="quickActions">Quick actions</h3></div>
+            <div class="card-app" data-aos="fade-up">
+              <div class="card-app-header"><h3><i class="bi bi-lightning-charge" aria-hidden="true"></i> <span data-i18n="quickActions">Quick actions</span></h3></div>
               <div class="card-app-body">
                 <div class="quick-actions">
                   <a href="orders.html" class="quick-action-btn"><i class="bi bi-bag-check"></i><span data-i18n="viewOrders">View Orders</span></a>
@@ -75,6 +75,7 @@
   <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/session.js"></script>
   <script src="../assets/js/utils.js"></script>
   <script src="../assets/js/translations.js"></script>
   <script src="../assets/js/mock-data.js"></script>

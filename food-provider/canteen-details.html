@@ -32,11 +32,14 @@
         </nav>
 
         <div class="detail-header" data-aos="fade-up">
-          <div>
-            <h1 id="detailName">Canteen</h1>
-            <div class="detail-meta">
-              <span><i class="bi bi-building" aria-hidden="true"></i> <span id="detailSchool">—</span></span>
-              <span id="detailStatus"></span>
+          <div class="detail-header-main">
+            <div class="detail-avatar" aria-hidden="true"><i class="bi bi-shop-window"></i></div>
+            <div>
+              <h1 id="detailName">Canteen</h1>
+              <div class="detail-meta">
+                <span><i class="bi bi-building" aria-hidden="true"></i> <span id="detailSchool">—</span></span>
+                <span id="detailStatus"></span>
+              </div>
             </div>
           </div>
           <div class="page-actions">
@@ -47,16 +50,24 @@
         </div>
 
         <div class="tabs-app" role="tablist" data-aos="fade-up">
-          <button type="button" class="tab-btn active" data-tab="overview" role="tab" aria-selected="true">Overview</button>
-          <button type="button" class="tab-btn" data-tab="menus" role="tab" aria-selected="false">Menus</button>
-          <button type="button" class="tab-btn" data-tab="settings" role="tab" aria-selected="false">Settings</button>
+          <button type="button" class="tab-btn active" data-tab="overview" role="tab" aria-selected="true">
+            <i class="bi bi-grid" aria-hidden="true"></i> Overview
+          </button>
+          <button type="button" class="tab-btn" data-tab="menus" role="tab" aria-selected="false">
+            <i class="bi bi-journal-text" aria-hidden="true"></i> Menus
+          </button>
+          <button type="button" class="tab-btn" data-tab="settings" role="tab" aria-selected="false">
+            <i class="bi bi-gear" aria-hidden="true"></i> Settings
+          </button>
         </div>
 
         <div class="tab-panel active" id="panel-overview" role="tabpanel">
           <div class="row g-4">
             <div class="col-lg-6">
               <div class="card-app">
-                <div class="card-app-header"><h3>Canteen information</h3></div>
+                <div class="card-app-header">
+                  <h3><i class="bi bi-info-circle" aria-hidden="true"></i> Canteen information</h3>
+                </div>
                 <div class="card-app-body">
                   <ul class="info-list">
                     <li><span class="label">Name</span><span class="value" id="infoName">—</span></li>
@@ -70,11 +81,15 @@
             </div>
             <div class="col-lg-6">
               <div class="card-app mb-4">
-                <div class="card-app-header"><h3>Assigned menus</h3></div>
-                <div class="card-app-body" id="overviewMenus"></div>
+                <div class="card-app-header">
+                  <h3><i class="bi bi-journal-check" aria-hidden="true"></i> Assigned menus</h3>
+                </div>
+                <div class="card-app-body assigned-menus-body" id="overviewMenus"></div>
               </div>
               <div class="card-app">
-                <div class="card-app-header"><h3>Quick actions</h3></div>
+                <div class="card-app-header">
+                  <h3><i class="bi bi-lightning-charge" aria-hidden="true"></i> Quick actions</h3>
+                </div>
                 <div class="card-app-body">
                   <div class="quick-actions">
                     <button type="button" class="quick-action-btn" onclick="document.getElementById('btnAssignFromDetail').click()">
@@ -125,16 +140,22 @@
   </div>
 
   <div class="modal fade modal-app" id="assignMenuModal" tabindex="-1" aria-labelledby="assignMenuModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h2 class="modal-title" id="assignMenuModalLabel">Assign Menu</h2>
+          <div class="modal-title-wrap">
+            <span class="modal-title-icon" aria-hidden="true"><i class="bi bi-link-45deg"></i></span>
+            <div>
+              <h2 class="modal-title" id="assignMenuModalLabel">Assign Menu</h2>
+              <p class="modal-subtitle">Link a menu to one or more canteens</p>
+            </div>
+          </div>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="form-group-app">
             <label class="form-label-app" for="assignMenuSelect">Select Menu <span class="required">*</span></label>
-            <select id="assignMenuSelect" class="select2-field" data-placeholder="Choose a menu"></select>
+            <select id="assignMenuSelect" class="select2-field" data-placeholder="Choose a menu" data-allow-clear="true"></select>
           </div>
           <div class="form-group-app">
             <label class="form-label-app" for="assignCanteensSelect">Select Canteens <span class="required">*</span></label>
@@ -147,19 +168,19 @@
               <span class="toggle-label">Available only during specific dates</span>
             </label>
           </div>
-          <div id="assignDateFields" class="row g-2" style="display:none">
+          <div id="assignDateFields" class="row g-2 assign-date-fields" hidden>
             <div class="col-6 form-group-app">
               <label class="form-label-app" for="assignFrom">From</label>
-              <input type="date" id="assignFrom" class="form-control-app">
+              <input type="text" id="assignFrom" class="form-control-app" placeholder="Select date" autocomplete="off">
             </div>
             <div class="col-6 form-group-app">
               <label class="form-label-app" for="assignTo">To</label>
-              <input type="date" id="assignTo" class="form-control-app">
+              <input type="text" id="assignTo" class="form-control-app" placeholder="Select date" autocomplete="off">
             </div>
           </div>
           <div class="form-group-app mb-0">
             <label class="form-label-app" for="assignStatus">Status</label>
-            <select id="assignStatus" class="form-select-app">
+            <select id="assignStatus" class="select2-field" data-placeholder="Select status">
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
             </select>
@@ -167,7 +188,9 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn-app btn-outline-app" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn-app btn-primary-app" id="btnConfirmAssign">Assign Menu</button>
+          <button type="button" class="btn-app btn-primary-app" id="btnConfirmAssign">
+            <i class="bi bi-check2-circle" aria-hidden="true"></i> Assign Menu
+          </button>
         </div>
       </div>
     </div>
@@ -183,6 +206,7 @@
   <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/session.js"></script>
   <script src="../assets/js/utils.js"></script>
   <script src="../assets/js/translations.js"></script>
   <script src="../assets/js/mock-data.js"></script>

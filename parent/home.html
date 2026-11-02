@@ -17,33 +17,138 @@
   <link href="../assets/css/responsive.css" rel="stylesheet">
 </head>
 <body>
-  <div class="app-shell"><div class="app-main"><div class="app-content">
-    <div class="parent-hero" data-aos="fade-up">
-      <h1 data-i18n="home">Home</h1>
-      <p class="mb-3" data-i18n="welcomeParent">Order lunch ahead.</p>
-      <div class="d-flex flex-wrap gap-2">
-        <button type="button" class="btn-app btn-primary-app" id="btnTopUpHero"><i class="bi bi-plus-lg"></i> <span data-i18n="topUp">Top Up</span></button>
-        <a href="order.html" class="btn-app btn-outline-app" data-i18n="orderFood">Order Food</a>
+  <div class="app-shell">
+    <div class="app-main">
+      <div class="app-content">
+        <nav aria-label="Breadcrumb">
+          <ol class="breadcrumb-app">
+            <li><span class="current" data-i18n="home">Home</span></li>
+          </ol>
+        </nav>
+
+        <div class="page-header page-header--panel" data-aos="fade-up">
+          <div class="page-header-text">
+            <p class="page-kicker"><i class="bi bi-house-door" aria-hidden="true"></i> Parent</p>
+            <h1 data-i18n="home">Home</h1>
+            <p data-i18n="welcomeParent">Order lunch ahead — wallets, children, and menus in one place.</p>
+          </div>
+          <div class="page-actions">
+            <button type="button" class="btn-app btn-primary-app" id="btnTopUpHero">
+              <i class="bi bi-plus-lg" aria-hidden="true"></i>
+              <span data-i18n="topUp">Top Up</span>
+            </button>
+            <a href="order.html" class="btn-app btn-outline-app">
+              <i class="bi bi-cart3" aria-hidden="true"></i>
+              <span data-i18n="orderFood">Order Food</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="stat-grid parent-home-stats" data-aos="fade-up">
+          <div class="stat-card stat-card--navy">
+            <div class="stat-card-label">
+              <span data-i18n="familyWallet">Family Wallet</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-wallet2"></i></span>
+            </div>
+            <div class="stat-card-value" id="familyBalance">₪0</div>
+          </div>
+          <div class="stat-card stat-card--teal">
+            <div class="stat-card-label">
+              <span data-i18n="myChildren">My Children</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-people"></i></span>
+            </div>
+            <div class="stat-card-value" id="statChildrenCount">0</div>
+          </div>
+          <div class="stat-card stat-card--sky">
+            <div class="stat-card-label">
+              <span data-i18n="myOrders">Active Orders</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-bag-check"></i></span>
+            </div>
+            <div class="stat-card-value" id="statActiveOrders">0</div>
+          </div>
+          <div class="stat-card stat-card--coral">
+            <div class="stat-card-label">
+              <span data-i18n="topUp">Quick Top Up</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-plus-circle"></i></span>
+            </div>
+            <div class="stat-card-value stat-card-value--action">
+              <button type="button" class="btn-app btn-sm-app btn-ghost-light" id="btnTopUp">
+                <i class="bi bi-lightning-charge" aria-hidden="true"></i>
+                <span data-i18n="topUp">Top Up</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-lg-8">
+            <div class="card-app mb-4" data-aos="fade-up">
+              <div class="card-app-header">
+                <h3><i class="bi bi-people" aria-hidden="true"></i> <span data-i18n="myChildren">My Children</span></h3>
+                <a href="children.html" class="btn-app btn-outline-app btn-sm-app" data-i18n="view">View all</a>
+              </div>
+              <div class="card-app-body">
+                <div class="parent-children-grid" id="childrenHome"></div>
+              </div>
+            </div>
+
+            <div class="card-app" data-aos="fade-up">
+              <div class="card-app-header">
+                <h3><i class="bi bi-clock-history" aria-hidden="true"></i> <span data-i18n="history">Recent Activity</span></h3>
+                <a href="wallet.html" class="btn-app btn-outline-app btn-sm-app" data-i18n="wallet">Wallet</a>
+              </div>
+              <div class="card-app-body" id="activityList"></div>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <div class="card-app mb-4 parent-wallet-side" data-aos="fade-up">
+              <div class="card-app-header">
+                <h3><i class="bi bi-wallet2" aria-hidden="true"></i> <span data-i18n="familyWallet">Family Wallet</span></h3>
+              </div>
+              <div class="card-app-body">
+                <div class="parent-wallet-balance" id="familyBalanceSide">₪0</div>
+                <p class="parent-wallet-hint">Shared balance for all children</p>
+                <div class="d-flex flex-wrap gap-2">
+                  <button type="button" class="btn-app btn-primary-app btn-sm-app" id="btnTopUpSide">
+                    <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                    <span data-i18n="topUp">Top Up</span>
+                  </button>
+                  <a href="wallet.html" class="btn-app btn-outline-app btn-sm-app" data-i18n="wallet">Wallet</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-app" data-aos="fade-up">
+              <div class="card-app-header">
+                <h3><i class="bi bi-lightning-charge" aria-hidden="true"></i> <span data-i18n="quickActions">Quick actions</span></h3>
+              </div>
+              <div class="card-app-body">
+                <div class="quick-actions">
+                  <a href="order.html" class="quick-action-btn">
+                    <i class="bi bi-cart3"></i>
+                    <span data-i18n="orderFood">Order Food</span>
+                  </a>
+                  <a href="children.html" class="quick-action-btn">
+                    <i class="bi bi-people"></i>
+                    <span data-i18n="myChildren">My Children</span>
+                  </a>
+                  <a href="orders.html" class="quick-action-btn">
+                    <i class="bi bi-receipt"></i>
+                    <span data-i18n="myOrders">My Orders</span>
+                  </a>
+                  <a href="calendar.html" class="quick-action-btn">
+                    <i class="bi bi-calendar3"></i>
+                    <span data-i18n="calendar">Calendar</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-
-    <div class="wallet-card mb-4" data-aos="fade-up">
-      <div class="label" data-i18n="familyWallet">Family Wallet</div>
-      <div class="balance" id="familyBalance">₪0</div>
-      <div class="wallet-actions">
-        <button type="button" class="btn-app btn-sm-app" id="btnTopUp" data-i18n="topUp">Top Up</button>
-        <a href="wallet.html" class="btn-app btn-sm-app" data-i18n="wallet">Wallet</a>
-      </div>
-    </div>
-
-    <h2 class="h5 mb-3" data-i18n="myChildren">My Children</h2>
-    <div class="row g-3 mb-4" id="childrenHome"></div>
-
-    <div class="card-app" data-aos="fade-up">
-      <div class="card-app-header"><h3 data-i18n="history">Recent Activity</h3></div>
-      <div class="card-app-body" id="activityList"></div>
-    </div>
-  </div></div></div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -51,6 +156,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/session.js"></script>
   <script src="../assets/js/utils.js"></script>
   <script src="../assets/js/mock-data.js"></script>
   <script src="../assets/js/translations.js"></script>
@@ -65,6 +171,6 @@
   <script src="../assets/js/navigation.js"></script>
   <script src="../assets/js/app.js"></script>
   <script src="../assets/js/parent.js"></script>
-  <script>$(function(){ ParentApp.initHome(); });</script>
+  <script>$(function () { ParentApp.initHome(); });</script>
 </body>
 </html>

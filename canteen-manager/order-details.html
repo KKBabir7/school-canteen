@@ -24,6 +24,7 @@
 
         <div class="detail-header no-print" data-aos="fade-up">
           <div>
+            <p class="page-kicker mb-2"><i class="bi bi-receipt" aria-hidden="true"></i> Order details</p>
             <h1 id="odNumber">#—</h1>
             <div class="detail-meta">
               <span><i class="bi bi-person"></i> <span id="odStudent">—</span></span>
@@ -37,16 +38,16 @@
           </div>
         </div>
 
-        <div class="card-app mb-4 no-print">
-          <div class="card-app-header"><h3 data-i18n="status">Status</h3></div>
+        <div class="card-app mb-4 no-print" data-aos="fade-up">
+          <div class="card-app-header"><h3><i class="bi bi-signpost-split" aria-hidden="true"></i> <span data-i18n="status">Status</span></h3></div>
           <div class="card-app-body">
             <div id="odStepper"></div>
             <div id="odActions" class="mt-3"></div>
           </div>
         </div>
 
-        <div class="card-app no-print">
-          <div class="card-app-header"><h3 data-i18n="items">Order items</h3></div>
+        <div class="card-app no-print" data-aos="fade-up">
+          <div class="card-app-header"><h3><i class="bi bi-list-ul" aria-hidden="true"></i> <span data-i18n="items">Order items</span></h3></div>
           <div class="card-app-body">
             <div id="odItems"></div>
             <div class="d-flex justify-content-between pt-3 mt-2 border-top">
@@ -77,6 +78,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/session.js"></script>
   <script src="../assets/js/utils.js"></script>
   <script src="../assets/js/translations.js"></script>
   <script src="../assets/js/mock-data.js"></script>

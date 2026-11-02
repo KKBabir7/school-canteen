@@ -36,6 +36,7 @@
         };
       }
 
+      Forms.initPageSelect2('#menuStatus');
       this.renderSections();
       this.bindForm();
       this.bindAddSectionModal();

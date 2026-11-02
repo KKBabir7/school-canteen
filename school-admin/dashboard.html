@@ -12,35 +12,106 @@
   <link href="../assets/css/dashboard.css" rel="stylesheet">
   <link href="../assets/css/components.css" rel="stylesheet">
   <link href="../assets/css/forms.css" rel="stylesheet">
+  <link href="../assets/css/ordering.css" rel="stylesheet">
   <link href="../assets/css/rtl.css" rel="stylesheet">
   <link href="../assets/css/responsive.css" rel="stylesheet">
 </head>
 <body>
-  <div class="app-shell"><div class="app-main"><div class="app-content">
-    <div class="welcome-banner" data-aos="fade-up">
-      <h2 id="saSchoolName">School</h2>
-      <p data-i18n="welcomeSchoolAdmin">Manage grades, breaks, and canteens for your school.</p>
-    </div>
+  <div class="app-shell">
+    <div class="app-main">
+      <div class="app-content">
+        <nav aria-label="Breadcrumb">
+          <ol class="breadcrumb-app">
+            <li><span class="current" data-i18n="dashboard">Dashboard</span></li>
+          </ol>
+        </nav>
 
-    <div class="stat-grid">
-      <div class="stat-card" data-aos="fade-up">
-        <div class="stat-card-label"><span data-i18n="grades">Grades</span></div>
-        <div class="stat-card-value" id="statGrades">0</div>
-      </div>
-      <div class="stat-card" data-aos="fade-up">
-        <div class="stat-card-label"><span data-i18n="classes">Classes</span></div>
-        <div class="stat-card-value" id="statClasses">0</div>
-      </div>
-      <div class="stat-card" data-aos="fade-up">
-        <div class="stat-card-label"><span data-i18n="breaks">Breaks</span></div>
-        <div class="stat-card-value" id="statBreaks">0</div>
-      </div>
-      <div class="stat-card" data-aos="fade-up">
-        <div class="stat-card-label"><span data-i18n="canteens">Canteens</span></div>
-        <div class="stat-card-value" id="statCanteens">0</div>
+        <div class="page-header page-header--panel" data-aos="fade-up">
+          <div class="page-header-text">
+            <p class="page-kicker"><i class="bi bi-building" aria-hidden="true"></i> School Admin</p>
+            <h1 id="saSchoolName">School</h1>
+            <p data-i18n="welcomeSchool">Configure school schedule, grades, and ordering rules.</p>
+          </div>
+          <div class="page-actions">
+            <a href="grades.html" class="btn-app btn-outline-app">
+              <i class="bi bi-mortarboard" aria-hidden="true"></i>
+              <span data-i18n="gradesClasses">Grades &amp; Classes</span>
+            </a>
+            <a href="settings.html" class="btn-app btn-primary-app">
+              <i class="bi bi-gear" aria-hidden="true"></i>
+              <span data-i18n="settings">Settings</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="stat-grid" data-aos="fade-up">
+          <div class="stat-card stat-card--navy">
+            <div class="stat-card-label">
+              <span data-i18n="grades">Grades</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-mortarboard"></i></span>
+            </div>
+            <div class="stat-card-value" id="statGrades">0</div>
+          </div>
+          <div class="stat-card stat-card--teal">
+            <div class="stat-card-label">
+              <span data-i18n="classes">Classes</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-grid-3x3-gap"></i></span>
+            </div>
+            <div class="stat-card-value" id="statClasses">0</div>
+          </div>
+          <div class="stat-card stat-card--sky">
+            <div class="stat-card-label">
+              <span data-i18n="breaks">Breaks</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-clock-history"></i></span>
+            </div>
+            <div class="stat-card-value" id="statBreaks">0</div>
+          </div>
+          <div class="stat-card stat-card--coral">
+            <div class="stat-card-label">
+              <span data-i18n="canteens">Canteens</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-shop-window"></i></span>
+            </div>
+            <div class="stat-card-value" id="statCanteens">0</div>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-lg-8">
+            <div class="card-app mb-4" data-aos="fade-up">
+              <div class="card-app-header">
+                <h3><i class="bi bi-shop-window" aria-hidden="true"></i> <span data-i18n="canteens">Canteens</span></h3>
+                <a href="canteens.html" class="btn-app btn-outline-app btn-sm-app" data-i18n="view">View</a>
+              </div>
+              <div class="card-app-body" id="dashCanteens"></div>
+            </div>
+            <div class="card-app" data-aos="fade-up">
+              <div class="card-app-header">
+                <h3><i class="bi bi-clock-history" aria-hidden="true"></i> <span data-i18n="breaks">Breaks</span></h3>
+                <a href="breaks.html" class="btn-app btn-outline-app btn-sm-app" data-i18n="view">View</a>
+              </div>
+              <div class="card-app-body" id="dashBreaks"></div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="card-app" data-aos="fade-up">
+              <div class="card-app-header">
+                <h3><i class="bi bi-lightning-charge" aria-hidden="true"></i> <span data-i18n="quickActions">Quick actions</span></h3>
+              </div>
+              <div class="card-app-body">
+                <div class="quick-actions">
+                  <a href="grades.html" class="quick-action-btn"><i class="bi bi-mortarboard"></i><span data-i18n="gradesClasses">Grades &amp; Classes</span></a>
+                  <a href="breaks.html" class="quick-action-btn"><i class="bi bi-clock-history"></i><span data-i18n="breaks">Breaks</span></a>
+                  <a href="canteens.html" class="quick-action-btn"><i class="bi bi-shop-window"></i><span data-i18n="canteens">Canteens</span></a>
+                  <a href="orders.html" class="quick-action-btn"><i class="bi bi-bag-check"></i><span data-i18n="orders">Orders</span></a>
+                  <a href="settings.html" class="quick-action-btn"><i class="bi bi-gear"></i><span data-i18n="settings">Settings</span></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div></div></div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -48,6 +119,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/session.js"></script>
   <script src="../assets/js/utils.js"></script>
   <script src="../assets/js/mock-data.js"></script>
   <script src="../assets/js/translations.js"></script>
@@ -57,6 +129,6 @@
   <script src="../assets/js/navigation.js"></script>
   <script src="../assets/js/app.js"></script>
   <script src="../assets/js/school-admin.js"></script>
-  <script>$(function(){ SchoolAdminApp.initDashboard(); });</script>
+  <script>$(function () { SchoolAdminApp.initDashboard(); });</script>
 </body>
 </html>

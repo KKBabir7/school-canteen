@@ -3,17 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SchoolFood — School Canteen Pre-Ordering Platform</title>
-  <meta name="description" content="Modern school canteen food pre-ordering for food providers and canteen managers. Bilingual EN/AR, PWA-ready validation MVP.">
-  <link rel="canonical" href="https://example.com/">
+  <title>SchoolFood — School Canteen Pre-Ordering</title>
+  <meta name="description" content="Pre-order school meals before break. EN/AR bilingual. Multi-role access for parents, students, food providers, and canteen managers.">
   <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#1a365d">
+  <meta name="theme-color" content="#314D63">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="SchoolFood">
   <link rel="icon" href="assets/images/logo/icon.svg" type="image/svg+xml">
-  <meta property="og:title" content="SchoolFood — School Canteen Pre-Ordering">
-  <meta property="og:description" content="Validate canteen operations with menus, assignments, and live order workflows.">
-  <meta property="og:type" content="website">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
@@ -26,111 +22,331 @@
 <body class="landing-body">
   <a class="visually-hidden-focusable" href="#main">Skip to content</a>
 
-  <nav class="landing-nav" aria-label="Primary">
-    <div class="container d-flex align-items-center justify-content-between">
-      <a href="index.html" class="brand">
-        <span class="brand-mark" aria-hidden="true"><i class="bi bi-cup-hot-fill"></i></span>
-        SchoolFood
-      </a>
-      <div class="d-flex align-items-center gap-2 flex-wrap">
-        <div class="lang-switcher" role="group" aria-label="Language">
-          <button type="button" data-lang="en" class="active">EN</button>
-          <button type="button" data-lang="ar">العربية</button>
+  <header class="lp-masthead">
+    <nav class="landing-nav" aria-label="Primary">
+      <div class="container landing-nav-inner">
+        <a href="index.html" class="brand">
+          <span class="brand-mark" aria-hidden="true"><i class="bi bi-cup-hot-fill"></i></span>
+          <span>SchoolFood</span>
+        </a>
+        <div class="landing-nav-actions">
+          <div class="landing-nav-links">
+            <a class="landing-nav-link is-active" href="#main">Home</a>
+            <a class="landing-nav-link" href="#about">About</a>
+            <a class="landing-nav-link" href="#capabilities">Capabilities</a>
+            <a class="landing-nav-link" href="#demo">Demo</a>
+            <a class="landing-nav-link" href="#how">How it works</a>
+          </div>
+          <div class="lp-lang-dd" data-lang-dd>
+            <button type="button" class="lp-lang-toggle" aria-expanded="false" aria-haspopup="listbox" aria-label="Language">
+              <img class="lp-lang-flag" src="https://flagcdn.com/w40/gb.png" width="20" height="14" alt="" data-lang-flag>
+              <span class="lp-lang-code">EN</span>
+              <i class="bi bi-chevron-down" aria-hidden="true"></i>
+            </button>
+            <ul class="lp-lang-menu" role="listbox" hidden>
+              <li role="option">
+                <button type="button" data-lang="en">
+                  <img src="https://flagcdn.com/w40/gb.png" width="20" height="14" alt=""> English
+                </button>
+              </li>
+              <li role="option">
+                <button type="button" data-lang="ar">
+                  <img src="https://flagcdn.com/w40/sa.png" width="20" height="14" alt=""> العربية
+                </button>
+              </li>
+            </ul>
+          </div>
+          <a href="#demo" class="lp-cta lp-cta--sm">Start demo</a>
         </div>
-        <a href="parent/home.html" class="btn-app btn-primary-app btn-sm-app">Parent</a>
-        <a href="food-provider/dashboard.html" class="btn-app btn-outline-app btn-sm-app">Provider</a>
-        <a href="canteen-manager/dashboard.html" class="btn-app btn-outline-app btn-sm-app">Manager</a>
       </div>
-    </div>
-  </nav>
+    </nav>
 
-  <main id="main">
-    <section class="hero">
+    <section class="lp-hero" id="main" aria-label="SchoolFood">
+      <div class="lp-hero-slider" aria-hidden="true">
+        <div class="lp-slide is-active" style="background-image:url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1920&h=1080&fit=crop&q=80')"></div>
+        <div class="lp-slide" style="background-image:url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1920&h=1080&fit=crop&q=80')"></div>
+        <div class="lp-slide" style="background-image:url('https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1920&h=1080&fit=crop&q=80')"></div>
+      </div>
+      <div class="lp-hero-shade" aria-hidden="true"></div>
+
+      <div class="container lp-hero-content">
+        <p class="lp-brand">School canteen, simplified</p>
+        <h1>Best quality school meals</h1>
+        <p class="lp-lead">
+          Pre-order lunch before break. Pickup when the bell rings —
+          bilingual EN/AR for families, kitchens, and school admins.
+        </p>
+        <div class="lp-hero-actions">
+          <a href="#demo" class="lp-cta">Enter demo</a>
+          <a href="#how" class="lp-btn-ghost">How it works</a>
+        </div>
+      </div>
+
+      <button type="button" class="lp-hero-arrow lp-hero-arrow--prev" data-hero-prev aria-label="Previous slide">
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      </button>
+      <button type="button" class="lp-hero-arrow lp-hero-arrow--next" data-hero-next aria-label="Next slide">
+        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+      </button>
+
+      <svg class="lp-hero-wave" viewBox="0 0 1440 72" preserveAspectRatio="none" aria-hidden="true">
+        <path fill="currentColor" d="M0,32 C240,72 480,0 720,24 C960,48 1200,72 1440,28 L1440,72 L0,72 Z"></path>
+      </svg>
+    </section>
+  </header>
+
+  <main>
+    <!-- Promo strip (Feane-style dual cards) -->
+    <section class="section lp-promos" aria-label="Highlights">
       <div class="container">
-        <div class="row align-items-center">
-          <div class="col-lg-6">
-            <div class="hero-content" data-aos="fade-up">
-              <h1 class="hero-brand">School<span>Food</span></h1>
-              <p class="hero-lead">Pre-order school meals with clarity. Food providers manage canteens and bilingual menus. Canteen managers run the daily order floor — in English or Arabic.</p>
-        <div class="d-flex flex-wrap gap-2">
-                <a href="parent/home.html" class="btn-app btn-primary-app btn-lg-app">Parent</a>
-                <a href="food-provider/dashboard.html" class="btn-app btn-outline-app btn-lg-app">Food Provider</a>
-                <a href="canteen-manager/dashboard.html" class="btn-app btn-outline-app btn-lg-app">Canteen Manager</a>
-              </div>
-              <div class="d-flex flex-wrap gap-2 mt-2">
-                <a href="student/home.html" class="btn-app btn-ghost-app btn-sm-app">Student</a>
-                <a href="school-admin/dashboard.html" class="btn-app btn-ghost-app btn-sm-app">School Admin</a>
-                <a href="super-admin/schools.html" class="btn-app btn-ghost-app btn-sm-app">Super Admin</a>
-              </div>
+        <div class="lp-promo-grid">
+          <article class="lp-promo" data-aos="fade-up">
+            <div class="lp-promo-copy">
+              <p class="lp-promo-tag">Bilingual</p>
+              <h3>EN / العربية ready</h3>
+              <p>Full RTL support for families and staff — switch language anytime.</p>
+              <a href="#demo" class="lp-promo-link">Try the demo <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
             </div>
-          </div>
-          <div class="col-lg-6">
-            <div class="hero-visual" data-aos="fade-left" data-aos-delay="100">
-              <div class="hero-visual-frame">
-                <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=900&h=675&fit=crop&q=80" alt="Fresh prepared school meals" width="900" height="675" fetchpriority="high">
-              </div>
+            <div class="lp-promo-media" aria-hidden="true">
+              <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop&q=80" alt="" width="400" height="400">
             </div>
-          </div>
+          </article>
+          <article class="lp-promo lp-promo--alt" data-aos="fade-up" data-aos-delay="60">
+            <div class="lp-promo-copy">
+              <p class="lp-promo-tag">Multi-role</p>
+              <h3>One login, many menus</h3>
+              <p>Parent + manager or provider + floor ops — roles merge in one sidebar.</p>
+              <a href="#capabilities" class="lp-promo-link">See roles <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+            </div>
+            <div class="lp-promo-media" aria-hidden="true">
+              <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=400&fit=crop&q=80" alt="" width="400" height="400">
+            </div>
+          </article>
         </div>
       </div>
     </section>
 
-    <section class="section" id="how-it-works">
-      <div class="container">
-        <h2 class="section-title" data-aos="fade-up">How it works</h2>
-        <p class="section-lead" data-aos="fade-up">A simple operational loop designed for schools validating digital canteen ordering.</p>
-        <div class="row g-4">
-          <div class="col-md-4" data-aos="fade-up"><div class="feature-block"><div class="feature-icon"><i class="bi bi-shop"></i></div><h3 class="h5">Set up canteens</h3><p class="text-muted mb-0">Food providers register locations and keep contact details current.</p></div></div>
-          <div class="col-md-4" data-aos="fade-up"><div class="feature-block"><div class="feature-icon"><i class="bi bi-journal-richtext"></i></div><h3 class="h5">Build &amp; assign menus</h3><p class="text-muted mb-0">Create bilingual sections and items, then assign menus to canteens.</p></div></div>
-          <div class="col-md-4" data-aos="fade-up"><div class="feature-block"><div class="feature-icon"><i class="bi bi-bag-check"></i></div><h3 class="h5">Fulfill daily orders</h3><p class="text-muted mb-0">Managers move orders from New → Preparing → Ready → Completed.</p></div></div>
+    <!-- About (Funday/Foody split + circular collage) -->
+    <section class="section lp-about" id="about">
+      <div class="container lp-about-grid">
+        <div class="lp-about-collage" data-aos="fade-right" aria-hidden="true">
+          <img class="lp-about-img lp-about-img--lg" src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=700&h=700&fit=crop&q=80" alt="" width="700" height="700">
+          <img class="lp-about-img lp-about-img--sm" src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=360&h=360&fit=crop&q=80" alt="" width="360" height="360">
+          <img class="lp-about-img lp-about-img--xs" src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=280&h=280&fit=crop&q=80" alt="" width="280" height="280">
+        </div>
+        <div class="lp-about-copy" data-aos="fade-up">
+          <p class="lp-section-kicker">About SchoolFood</p>
+          <h2>Built for the school lunch rush</h2>
+          <p>
+            SchoolFood is a validation prototype for digital canteen pre-ordering.
+            Families order before break, kitchens prepare with clarity, and managers
+            move orders from New to Ready — in English and Arabic.
+          </p>
+          <ul class="lp-about-points">
+            <li><i class="bi bi-check2-circle" aria-hidden="true"></i> Wallet limits &amp; food controls</li>
+            <li><i class="bi bi-check2-circle" aria-hidden="true"></i> Bilingual menus for every canteen</li>
+            <li><i class="bi bi-check2-circle" aria-hidden="true"></i> Multi-role access in a single session</li>
+          </ul>
+          <a href="#demo" class="lp-cta">Enter demo</a>
         </div>
       </div>
     </section>
 
-    <section class="section section-alt" id="food-providers">
+    <section class="section lp-capabilities" id="capabilities">
       <div class="container">
-        <div class="row align-items-center g-5">
-          <div class="col-lg-6" data-aos="fade-right">
-            <h2 class="section-title">For Food Providers</h2>
-            <p class="section-lead">Operate multiple school canteens from one dashboard with EN/AR menus.</p>
-            <a href="food-provider/dashboard.html" class="btn-app btn-primary-app mt-3">Open Food Provider demo</a>
-          </div>
-          <div class="col-lg-6" data-aos="fade-left"><img class="rounded-app-lg shadow-app-md object-cover w-100" style="aspect-ratio:4/3" src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=800&h=600&fit=crop&q=80" alt="Food provider kitchen" loading="lazy" width="800" height="600"></div>
+        <div class="landing-section-head lp-cap-head" data-aos="fade-up">
+          <p class="lp-section-kicker">Roles &amp; access</p>
+          <h2>What each side of the school gets</h2>
+          <p>Clear jobs for every role — without forcing people into separate apps when one person wears two hats.</p>
+        </div>
+        <div class="lp-cap-grid">
+          <article class="lp-cap" data-aos="fade-up">
+            <span class="lp-cap-icon" aria-hidden="true"><i class="bi bi-people-fill"></i></span>
+            <h3>Families</h3>
+            <p>Wallet, children, food controls, and tray ordering for today or tomorrow.</p>
+          </article>
+          <article class="lp-cap" data-aos="fade-up" data-aos-delay="40">
+            <span class="lp-cap-icon" aria-hidden="true"><i class="bi bi-shop"></i></span>
+            <h3>Food providers</h3>
+            <p>Canteens, bilingual menus, product catalog, and assignments across schools.</p>
+          </article>
+          <article class="lp-cap" data-aos="fade-up" data-aos-delay="80">
+            <span class="lp-cap-icon" aria-hidden="true"><i class="bi bi-clipboard2-check-fill"></i></span>
+            <h3>Canteen managers</h3>
+            <p>Today’s menus, item availability, and orders: New → Preparing → Ready → Done.</p>
+          </article>
+          <article class="lp-cap" data-aos="fade-up" data-aos-delay="120">
+            <span class="lp-cap-icon" aria-hidden="true"><i class="bi bi-building"></i></span>
+            <h3>School &amp; platform</h3>
+            <p>Grades, breaks, ordering rules, and school setup for validation meetings.</p>
+          </article>
         </div>
       </div>
     </section>
 
-    <section class="section" id="canteen-managers">
+    <!-- Feature circles (Pizzeria-style) -->
+    <section class="section lp-pillars" aria-label="Platform pillars">
       <div class="container">
-        <div class="row align-items-center g-5 flex-lg-row-reverse">
-          <div class="col-lg-6" data-aos="fade-left">
-            <h2 class="section-title">For Canteen Managers</h2>
-            <p class="section-lead">Today's menu, item availability, weekday schedules, and a live order queue.</p>
-            <a href="canteen-manager/dashboard.html" class="btn-app btn-primary-app mt-3">Open Canteen Manager demo</a>
-          </div>
-          <div class="col-lg-6" data-aos="fade-right"><img class="rounded-app-lg shadow-app-md object-cover w-100" style="aspect-ratio:4/3" src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=600&fit=crop&q=80" alt="Canteen service counter" loading="lazy" width="800" height="600"></div>
+        <div class="landing-section-head lp-cap-head" data-aos="fade-up">
+          <p class="lp-section-kicker">Why schools try it</p>
+          <h2>Simple loop. Clear ownership.</h2>
+          <p>Three ideas every demo validates — without extra apps or confusing role switching.</p>
+        </div>
+        <div class="lp-pillar-grid">
+          <article class="lp-pillar" data-aos="fade-up">
+            <div class="lp-pillar-photo">
+              <img src="https://images.unsplash.com/photo-1547592180-85f173990554?w=480&h=480&fit=crop&q=80" alt="" width="480" height="480">
+            </div>
+            <h3>Order early</h3>
+            <p>Parents and students build trays before the break bell.</p>
+          </article>
+          <article class="lp-pillar" data-aos="fade-up" data-aos-delay="50">
+            <div class="lp-pillar-photo">
+              <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=480&h=480&fit=crop&q=80" alt="" width="480" height="480">
+            </div>
+            <h3>Prepare on time</h3>
+            <p>Managers see New → Preparing → Ready on the floor queue.</p>
+          </article>
+          <article class="lp-pillar" data-aos="fade-up" data-aos-delay="100">
+            <div class="lp-pillar-photo">
+              <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=480&h=480&fit=crop&q=80" alt="" width="480" height="480">
+            </div>
+            <h3>Pickup fast</h3>
+            <p>Food is waiting when students arrive at the canteen.</p>
+          </article>
         </div>
       </div>
     </section>
 
-    <section class="section section-alt">
+    <section class="section landing-demo" id="demo">
       <div class="container">
-        <div class="cta-band" data-aos="zoom-in">
-          <h2>Ready to validate with your school?</h2>
-          <p>Install as a PWA, switch EN/العربية in-app, and reset demo data anytime from the user menu.</p>
-          <div class="d-flex flex-wrap justify-content-center gap-2">
-            <a href="food-provider/dashboard.html" class="btn-app btn-secondary-app btn-lg-app">Start as Food Provider</a>
-            <a href="canteen-manager/dashboard.html" class="btn-app btn-outline-app btn-lg-app" style="background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.4)">Start as Canteen Manager</a>
+        <div class="landing-section-head lp-cap-head" data-aos="fade-up">
+          <p class="lp-section-kicker">Interactive demo</p>
+          <h2>Start with a demo person</h2>
+          <p>
+            Pick once. That session unlocks every menu their roles allow —
+            even when one person wears two hats.
+          </p>
+        </div>
+        <div class="persona-grid" id="personaGrid"></div>
+      </div>
+    </section>
+
+    <!-- How it works zigzag (Foody menu style) -->
+    <section class="section landing-how" id="how">
+      <div class="container">
+        <div class="landing-section-head lp-cap-head" data-aos="fade-up">
+          <p class="lp-section-kicker">Daily loop</p>
+          <h2>How it works</h2>
+          <p>From kitchen setup to pickup — the same loop schools need to validate.</p>
+        </div>
+        <div class="lp-flow">
+          <article class="lp-flow-row" data-aos="fade-up">
+            <div class="lp-flow-media">
+              <img src="https://images.unsplash.com/photo-1556911220-bff31c812dba?w=900&h=700&fit=crop&q=80" alt="Kitchen menu setup" width="900" height="700">
+            </div>
+            <div class="lp-flow-card">
+              <span class="landing-step-num">01</span>
+              <h3>Set canteens and bilingual menus</h3>
+              <p>Providers create locations, sections, and items with EN/AR names, then assign menus to canteens.</p>
+            </div>
+          </article>
+          <article class="lp-flow-row lp-flow-row--flip" data-aos="fade-up">
+            <div class="lp-flow-media">
+              <img src="https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=900&h=700&fit=crop&q=80" alt="Family ordering lunch" width="900" height="700">
+            </div>
+            <div class="lp-flow-card">
+              <span class="landing-step-num">02</span>
+              <h3>Families order before the break</h3>
+              <p>Parents or students build a tray within wallet balance, daily limits, and food restrictions.</p>
+            </div>
+          </article>
+          <article class="lp-flow-row" data-aos="fade-up">
+            <div class="lp-flow-media">
+              <img src="https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=900&h=700&fit=crop&q=80" alt="Canteen service" width="900" height="700">
+            </div>
+            <div class="lp-flow-card">
+              <span class="landing-step-num">03</span>
+              <h3>Managers fulfill on the floor</h3>
+              <p>Orders move New → Preparing → Ready → Completed so food is waiting at break time.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gallery + CTA -->
+    <section class="section lp-gallery" aria-label="Meal inspiration">
+      <div class="container">
+        <div class="landing-section-head lp-cap-head">
+          <p class="lp-section-kicker">On the tray</p>
+          <h2>Fresh meals schools can demo</h2>
+          <p>High-quality food visuals for validation meetings — not a real kitchen catalog.</p>
+        </div>
+        <div class="lp-gallery-track">
+          <figure class="lp-gallery-item">
+            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=700&h=560&fit=crop&q=80" alt="Fresh lunch bowl" width="700" height="560" loading="lazy">
+          </figure>
+          <figure class="lp-gallery-item">
+            <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=700&h=560&fit=crop&q=80" alt="Vegetable salad" width="700" height="560" loading="lazy">
+          </figure>
+          <figure class="lp-gallery-item">
+            <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=700&h=560&fit=crop&q=80" alt="Healthy plate" width="700" height="560" loading="lazy">
+          </figure>
+          <figure class="lp-gallery-item">
+            <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=700&h=560&fit=crop&q=80" alt="Prepared dishes" width="700" height="560" loading="lazy">
+          </figure>
+          <figure class="lp-gallery-item">
+            <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=700&h=560&fit=crop&q=80" alt="Breakfast stack" width="700" height="560" loading="lazy">
+          </figure>
+          <figure class="lp-gallery-item">
+            <img src="https://images.unsplash.com/photo-1547592180-85f173990554?w=700&h=560&fit=crop&q=80" alt="Warm soup bowl" width="700" height="560" loading="lazy">
+          </figure>
+        </div>
+
+        <div class="landing-strip-inner">
+          <div>
+            <h2>Use this for school demos</h2>
+            <p>Switch language anytime. Reset sample data from the user menu. No real payments — mock data only.</p>
           </div>
+          <a href="#demo" class="lp-cta">Choose a demo user</a>
         </div>
       </div>
     </section>
   </main>
 
   <footer class="landing-footer">
-    <div class="container d-flex flex-wrap justify-content-between gap-2">
-      <span>&copy; 2026 SchoolFood — Validation MVP</span>
-      <span>Service layer + i18n + localStorage mock</span>
+    <div class="container">
+      <div class="lp-footer-grid">
+        <div class="lp-footer-brand">
+          <div class="brand brand-footer">
+            <span class="brand-mark" aria-hidden="true"><i class="bi bi-cup-hot-fill"></i></span>
+            SchoolFood
+          </div>
+          <p>Validation prototype for school canteen pre-ordering — bilingual, multi-role, PWA-ready.</p>
+        </div>
+        <div>
+          <h4>Explore</h4>
+          <ul class="lp-footer-links">
+            <li><a href="#about">About</a></li>
+            <li><a href="#capabilities">Capabilities</a></li>
+            <li><a href="#demo">Demo</a></li>
+            <li><a href="#how">How it works</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Demo notes</h4>
+          <ul class="lp-footer-links">
+            <li>EN / العربية · RTL</li>
+            <li>Mock data only</li>
+            <li>No real payments</li>
+          </ul>
+        </div>
+      </div>
+      <div class="lp-footer-bottom">
+        <p>&copy; 2026 SchoolFood</p>
+        <p>Built for school validation meetings</p>
+      </div>
     </div>
   </footer>
 
@@ -139,10 +355,113 @@
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
   <script src="assets/js/config.js"></script>
   <script src="assets/js/storage.js"></script>
+  <script src="assets/js/session.js"></script>
   <script src="assets/js/utils.js"></script>
   <script src="assets/js/translations.js"></script>
   <script src="assets/js/mock-data.js"></script>
   <script src="assets/js/app.js"></script>
-  <script>AOS.init({ duration: 500, once: true, offset: 40 });</script>
+  <script>
+    AOS.init({ duration: 500, once: true, offset: 40, easing: 'ease-out-cubic' });
+    (function () {
+      const labels = {
+        'food-provider': 'Food Provider',
+        'canteen-manager': 'Canteen Manager',
+        parent: 'Parent',
+        student: 'Student',
+        'school-admin': 'School Admin',
+        'super-admin': 'Super Admin'
+      };
+      const blurb = {
+        'david-fp-cm': 'Canteens, menus, and floor ops — same person, both menus.',
+        'nora-parent-cm': 'Order for kids and manage a canteen from one login.',
+        'layla-cm': 'Today’s menus, availability, and the order queue.',
+        'sarah-student': 'Order within wallet balance and parent limits.',
+        'miriam-sa': 'Grades, breaks, and school ordering rules.',
+        'platform-su': 'Create schools and activate them for demos.'
+      };
+      const $grid = $('#personaGrid');
+      Object.keys(APP_CONFIG.personas || {}).forEach(function (id, i) {
+        const p = APP_CONFIG.personas[id];
+        const av = (SchoolFoodSeed.avatars || {})[p.avatarKey] || '';
+        const roleText = p.roles.map(function (r) { return labels[r] || r; }).join(' · ');
+        $grid.append(
+          '<button type="button" class="persona-card" data-persona="' + id + '" data-aos="fade-up" data-aos-delay="' + (i * 35) + '">' +
+            '<div class="persona-card-top">' +
+              (av ? '<img class="persona-avatar" src="' + av + '" alt="" width="52" height="52">' : '') +
+              '<span class="persona-enter" aria-hidden="true"><i class="bi bi-arrow-right"></i></span>' +
+            '</div>' +
+            '<strong class="persona-name">' + p.name + '</strong>' +
+            '<span class="persona-roles">' + roleText + '</span>' +
+            '<span class="persona-blurb">' + (blurb[id] || '') + '</span>' +
+          '</button>'
+        );
+      });
+      $(document).on('click', '[data-persona]', function (e) {
+        e.preventDefault();
+        const s = Session.loginPersona($(this).attr('data-persona'));
+        if (s && s.home) window.location.assign(s.home);
+      });
+      $('.lang-switcher [data-lang]').on('click', function () {
+        I18n.setLang($(this).data('lang'));
+        window.location.reload();
+      });
+
+      // Language dropdown (flag)
+      (function () {
+        var $dd = $('[data-lang-dd]');
+        if (!$dd.length) return;
+        var lang = I18n.lang || 'en';
+        var meta = {
+          en: { flag: 'https://flagcdn.com/w40/gb.png', code: 'EN' },
+          ar: { flag: 'https://flagcdn.com/w40/sa.png', code: 'ع' }
+        };
+        function syncToggle() {
+          var m = meta[lang] || meta.en;
+          $dd.find('[data-lang-flag]').attr('src', m.flag);
+          $dd.find('.lp-lang-code').text(m.code);
+        }
+        syncToggle();
+        $dd.on('click', function (e) { e.stopPropagation(); });
+        $dd.find('.lp-lang-toggle').on('click', function () {
+          var open = $dd.hasClass('is-open');
+          $dd.toggleClass('is-open', !open);
+          $(this).attr('aria-expanded', !open);
+          $dd.find('.lp-lang-menu').prop('hidden', open);
+        });
+        $dd.on('click', '[data-lang]', function () {
+          I18n.setLang($(this).data('lang'));
+          window.location.reload();
+        });
+        $(document).on('click', function () {
+          $dd.removeClass('is-open');
+          $dd.find('.lp-lang-toggle').attr('aria-expanded', 'false');
+          $dd.find('.lp-lang-menu').prop('hidden', true);
+        });
+      })();
+
+      // Hero background slider
+      (function () {
+        var $slides = $('.lp-slide');
+        var total = $slides.length;
+        if (!total) return;
+        var index = 0;
+        var timer = null;
+
+        function go(n) {
+          index = (n + total) % total;
+          $slides.removeClass('is-active').eq(index).addClass('is-active');
+        }
+
+        function start() {
+          clearInterval(timer);
+          timer = setInterval(function () { go(index + 1); }, 5500);
+        }
+
+        $('[data-hero-prev]').on('click', function () { go(index - 1); start(); });
+        $('[data-hero-next]').on('click', function () { go(index + 1); start(); });
+        start();
+      })();
+    })();
+  </script>
 </body>
 </html>

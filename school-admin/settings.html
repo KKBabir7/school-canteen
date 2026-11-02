@@ -4,106 +4,189 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Settings | School Admin | SchoolFood</title>
+  <meta name="description" content="School profile, days, and ordering rules.">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
   <link href="../assets/css/style.css" rel="stylesheet">
   <link href="../assets/css/dashboard.css" rel="stylesheet">
   <link href="../assets/css/components.css" rel="stylesheet">
   <link href="../assets/css/forms.css" rel="stylesheet">
+  <link href="../assets/css/ordering.css" rel="stylesheet">
   <link href="../assets/css/rtl.css" rel="stylesheet">
   <link href="../assets/css/responsive.css" rel="stylesheet">
 </head>
 <body>
-  <div class="app-shell"><div class="app-main"><div class="app-content">
-    <div class="page-header">
-      <div class="page-header-text">
-        <h1 data-i18n="settings">Settings</h1>
-        <p data-i18n="schoolSettingsDesc">School profile, days, and ordering rules.</p>
+  <div class="app-shell">
+    <div class="app-main">
+      <div class="app-content">
+        <nav aria-label="Breadcrumb">
+          <ol class="breadcrumb-app">
+            <li><a href="dashboard.html" data-i18n="dashboard">Dashboard</a></li>
+            <li class="separator" aria-hidden="true">/</li>
+            <li><span class="current" data-i18n="settings">Settings</span></li>
+          </ol>
+        </nav>
+
+        <div class="page-header page-header--panel" data-aos="fade-up">
+          <div class="page-header-text">
+            <p class="page-kicker"><i class="bi bi-gear" aria-hidden="true"></i> Preferences</p>
+            <h1 data-i18n="settings">Settings</h1>
+            <p data-i18n="schoolSettingsDesc">School profile, days, and ordering rules.</p>
+          </div>
+          <div class="page-actions">
+            <button type="button" class="btn-app btn-primary-app" id="btnSaveSchoolSettings">
+              <i class="bi bi-check2-circle" aria-hidden="true"></i>
+              <span data-i18n="saveChanges">Save changes</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="tabs-app settings-tabs" role="tablist">
+          <button type="button" class="tab-btn active" data-tab="info" data-i18n="school">School Information</button>
+          <button type="button" class="tab-btn" data-tab="days" data-i18n="weekdays">School Days</button>
+          <button type="button" class="tab-btn" data-tab="ordering" data-i18n="ordering">Ordering Rules</button>
+          <button type="button" class="tab-btn" data-tab="notifications" data-i18n="notifications">Notifications</button>
+        </div>
+
+        <div class="tab-panel active" id="panel-info">
+          <div class="settings-layout" data-aos="fade-up">
+            <aside class="settings-card settings-profile-card">
+              <div class="settings-profile-avatar" aria-hidden="true"><i class="bi bi-building"></i></div>
+              <h3 id="saSettingsSchoolName">School</h3>
+              <p class="settings-profile-role">School profile</p>
+              <p class="settings-profile-email" id="saSettingsEmail">—</p>
+            </aside>
+            <div class="settings-forms">
+              <section class="settings-card">
+                <h3><i class="bi bi-building" aria-hidden="true"></i> <span data-i18n="school">School Information</span></h3>
+                <div class="row g-3">
+                  <div class="col-md-6 form-group-app mb-0">
+                    <label class="form-label-app" for="schNameEn" data-i18n="nameEn">Name (EN)</label>
+                    <input type="text" id="schNameEn" class="form-control-app">
+                  </div>
+                  <div class="col-md-6 form-group-app mb-0">
+                    <label class="form-label-app" for="schNameAr" data-i18n="nameAr">Name (AR)</label>
+                    <input type="text" id="schNameAr" class="form-control-app" dir="rtl">
+                  </div>
+                  <div class="col-md-6 form-group-app mb-0">
+                    <label class="form-label-app" for="schPhone" data-i18n="phone">Phone</label>
+                    <input type="tel" id="schPhone" class="form-control-app">
+                  </div>
+                  <div class="col-md-6 form-group-app mb-0">
+                    <label class="form-label-app" for="schEmail" data-i18n="email">Email</label>
+                    <input type="email" id="schEmail" class="form-control-app">
+                  </div>
+                  <div class="col-md-6 form-group-app mb-0">
+                    <label class="form-label-app" for="schCity" data-i18n="city">City</label>
+                    <input type="text" id="schCity" class="form-control-app">
+                  </div>
+                  <div class="col-md-6 form-group-app mb-0">
+                    <label class="form-label-app" for="schTimezone" data-i18n="timezone">Timezone</label>
+                    <select id="schTimezone" class="select2-field" data-placeholder="Timezone">
+                      <option value="Asia/Jerusalem">Asia/Jerusalem</option>
+                      <option value="Asia/Riyadh">Asia/Riyadh</option>
+                      <option value="Asia/Dubai">Asia/Dubai</option>
+                      <option value="Europe/London">Europe/London</option>
+                      <option value="UTC">UTC</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 form-group-app mb-0">
+                    <label class="form-label-app" for="schCurrency" data-i18n="currency">Currency</label>
+                    <select id="schCurrency" class="select2-field" data-placeholder="Currency">
+                      <option value="ILS">ILS (₪)</option>
+                      <option value="USD">USD ($)</option>
+                      <option value="EUR">EUR (€)</option>
+                      <option value="SAR">SAR</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 form-group-app mb-0">
+                    <label class="form-label-app" for="schLang">Preferred language</label>
+                    <select id="schLang" class="select2-field" data-placeholder="Language">
+                      <option value="en">English</option>
+                      <option value="ar">العربية</option>
+                    </select>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="panel-days">
+          <div class="settings-card" data-aos="fade-up" style="max-width:640px">
+            <h3><i class="bi bi-calendar-week" aria-hidden="true"></i> <span data-i18n="weekdays">School Days</span></h3>
+            <div class="check-list d-flex flex-wrap gap-2 mb-0">
+              <label class="check-item"><input type="checkbox" id="day-sun" class="sch-day" value="sun"> <span data-i18n="sun">Sun</span></label>
+              <label class="check-item"><input type="checkbox" id="day-mon" class="sch-day" value="mon"> <span data-i18n="mon">Mon</span></label>
+              <label class="check-item"><input type="checkbox" id="day-tue" class="sch-day" value="tue"> <span data-i18n="tue">Tue</span></label>
+              <label class="check-item"><input type="checkbox" id="day-wed" class="sch-day" value="wed"> <span data-i18n="wed">Wed</span></label>
+              <label class="check-item"><input type="checkbox" id="day-thu" class="sch-day" value="thu"> <span data-i18n="thu">Thu</span></label>
+              <label class="check-item"><input type="checkbox" id="day-fri" class="sch-day" value="fri"> <span data-i18n="fri">Fri</span></label>
+              <label class="check-item"><input type="checkbox" id="day-sat" class="sch-day" value="sat"> <span data-i18n="sat">Sat</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="panel-ordering">
+          <div class="settings-card" data-aos="fade-up" style="max-width:640px">
+            <h3><i class="bi bi-sliders" aria-hidden="true"></i> <span data-i18n="ordering">Ordering Rules</span></h3>
+            <div class="row g-3 mb-3">
+              <div class="col-md-6 form-group-app mb-0">
+                <label class="form-label-app" for="schAdvance" data-i18n="advanceOrderDays">Advance order days</label>
+                <input type="number" id="schAdvance" class="form-control-app" min="0">
+              </div>
+              <div class="col-md-6 form-group-app mb-0">
+                <label class="form-label-app" for="schCancel" data-i18n="cancelDeadlineHours">Cancel deadline (hours)</label>
+                <input type="number" id="schCancel" class="form-control-app" min="0">
+              </div>
+            </div>
+            <label class="toggle-app d-block mb-2">
+              <input type="checkbox" id="schParentsOrder">
+              <span class="toggle-track"></span>
+              <span data-i18n="parentsCanOrder">Parents can order</span>
+            </label>
+            <label class="toggle-app d-block">
+              <input type="checkbox" id="schStudentsOrder">
+              <span class="toggle-track"></span>
+              <span data-i18n="studentsCanOrder">Students can order</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="panel-notifications">
+          <div class="settings-card" data-aos="fade-up" style="max-width:640px">
+            <h3><i class="bi bi-bell" aria-hidden="true"></i> <span data-i18n="notifications">Notifications</span></h3>
+            <p class="text-muted">School-wide notification preferences (demo).</p>
+            <div class="check-list">
+              <label class="check-item"><input type="checkbox" checked> New order alerts</label>
+              <label class="check-item"><input type="checkbox" checked> Daily summary</label>
+              <label class="check-item"><input type="checkbox"> Low wallet reminders</label>
+            </div>
+          </div>
+        </div>
       </div>
-      <button type="button" class="btn-app btn-primary-app" id="btnSaveSchoolSettings" data-i18n="saveChanges">Save changes</button>
     </div>
-
-    <div class="settings-card" style="max-width:640px" data-aos="fade-up">
-      <h3 data-i18n="school">School</h3>
-      <div class="row g-3">
-        <div class="col-md-6 form-group-app">
-          <label class="form-label-app" for="schNameEn" data-i18n="nameEn">Name (EN)</label>
-          <input type="text" id="schNameEn" class="form-control-app">
-        </div>
-        <div class="col-md-6 form-group-app">
-          <label class="form-label-app" for="schNameAr" data-i18n="nameAr">Name (AR)</label>
-          <input type="text" id="schNameAr" class="form-control-app" dir="rtl">
-        </div>
-        <div class="col-md-6 form-group-app">
-          <label class="form-label-app" for="schPhone" data-i18n="phone">Phone</label>
-          <input type="tel" id="schPhone" class="form-control-app">
-        </div>
-        <div class="col-md-6 form-group-app">
-          <label class="form-label-app" for="schEmail" data-i18n="email">Email</label>
-          <input type="email" id="schEmail" class="form-control-app">
-        </div>
-        <div class="col-md-6 form-group-app">
-          <label class="form-label-app" for="schCity" data-i18n="city">City</label>
-          <input type="text" id="schCity" class="form-control-app">
-        </div>
-        <div class="col-md-6 form-group-app">
-          <label class="form-label-app" for="schTimezone" data-i18n="timezone">Timezone</label>
-          <input type="text" id="schTimezone" class="form-control-app">
-        </div>
-        <div class="col-md-6 form-group-app">
-          <label class="form-label-app" for="schCurrency" data-i18n="currency">Currency</label>
-          <input type="text" id="schCurrency" class="form-control-app">
-        </div>
-        <div class="col-md-6 form-group-app">
-          <label class="form-label-app" for="schAdvance" data-i18n="advanceOrderDays">Advance order days</label>
-          <input type="number" id="schAdvance" class="form-control-app" min="0">
-        </div>
-        <div class="col-md-6 form-group-app">
-          <label class="form-label-app" for="schCancel" data-i18n="cancelDeadlineHours">Cancel deadline (hours)</label>
-          <input type="number" id="schCancel" class="form-control-app" min="0">
-        </div>
-      </div>
-
-      <h3 class="mt-4" data-i18n="weekdays">School days</h3>
-      <div class="check-list d-flex flex-wrap gap-2 mb-3">
-        <label class="check-item"><input type="checkbox" id="day-sun" class="sch-day" value="sun"> <span data-i18n="sun">Sun</span></label>
-        <label class="check-item"><input type="checkbox" id="day-mon" class="sch-day" value="mon"> <span data-i18n="mon">Mon</span></label>
-        <label class="check-item"><input type="checkbox" id="day-tue" class="sch-day" value="tue"> <span data-i18n="tue">Tue</span></label>
-        <label class="check-item"><input type="checkbox" id="day-wed" class="sch-day" value="wed"> <span data-i18n="wed">Wed</span></label>
-        <label class="check-item"><input type="checkbox" id="day-thu" class="sch-day" value="thu"> <span data-i18n="thu">Thu</span></label>
-        <label class="check-item"><input type="checkbox" id="day-fri" class="sch-day" value="fri"> <span data-i18n="fri">Fri</span></label>
-        <label class="check-item"><input type="checkbox" id="day-sat" class="sch-day" value="sat"> <span data-i18n="sat">Sat</span></label>
-      </div>
-
-      <h3 class="mt-3" data-i18n="ordering">Ordering</h3>
-      <label class="toggle-app d-block mb-2">
-        <input type="checkbox" id="schParentsOrder">
-        <span class="toggle-track"></span>
-        <span data-i18n="parentsCanOrder">Parents can order</span>
-      </label>
-      <label class="toggle-app d-block">
-        <input type="checkbox" id="schStudentsOrder">
-        <span class="toggle-track"></span>
-        <span data-i18n="studentsCanOrder">Students can order</span>
-      </label>
-    </div>
-  </div></div></div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/session.js"></script>
   <script src="../assets/js/utils.js"></script>
   <script src="../assets/js/mock-data.js"></script>
   <script src="../assets/js/translations.js"></script>
   <script src="../assets/js/services/school-service.js"></script>
   <script src="../assets/js/components.js"></script>
+  <script src="../assets/js/forms.js"></script>
   <script src="../assets/js/navigation.js"></script>
   <script src="../assets/js/app.js"></script>
   <script src="../assets/js/school-admin.js"></script>
-  <script>$(function(){ SchoolAdminApp.initSettings(); });</script>
+  <script>$(function () { SchoolAdminApp.initSettings(); });</script>
 </body>
 </html>

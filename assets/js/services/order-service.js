@@ -6,13 +6,17 @@
   'use strict';
 
   const KEY = 'orders';
+  const SEED_KEY = 'ordersSeedVersion';
+  const SEED_VERSION = 3;
   const FLOW = { new: 'preparing', preparing: 'ready', ready: 'completed' };
 
   function ensure() {
     let data = Storage.get(KEY);
-    if (!data || !data.length) {
+    const ver = Number(Storage.get(SEED_KEY)) || 0;
+    if (!data || !data.length || ver < SEED_VERSION) {
       data = Utils.clone(SchoolFoodSeed.orders);
       Storage.set(KEY, data);
+      Storage.set(SEED_KEY, SEED_VERSION);
     }
     return data;
   }
