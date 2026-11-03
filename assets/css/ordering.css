@@ -459,9 +459,51 @@ html[dir="rtl"] .wallet-card::after {
   }
 }
 
+@media (max-width: 767.98px) {
+  .student-home-hero-copy,
+  .student-home-wallet,
+  .student-home-side {
+    padding: 1.15rem 1.1rem;
+  }
+
+  .student-home-hero-copy h1 {
+    font-size: 1.35rem;
+  }
+
+  .student-home-actions {
+    flex-direction: column;
+  }
+
+  .student-home-actions .btn-app {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .food-bento-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+  }
+
+  .bento-slots {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 575.98px) {
   .student-home-grid {
     grid-template-columns: 1fr;
+  }
+
+  .food-bento-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .bento-food-card h4 {
+    font-size: 0.82rem;
+  }
+
+  .bento-tray-card {
+    padding: 0.9rem;
   }
 }
 

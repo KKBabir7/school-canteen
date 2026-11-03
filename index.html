@@ -13,14 +13,56 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
-  <link href="assets/css/style.css" rel="stylesheet">
+  <link href="assets/css/style.css?v=navpad1" rel="stylesheet">
   <link href="assets/css/components.css" rel="stylesheet">
   <link href="assets/css/forms.css" rel="stylesheet">
   <link href="assets/css/rtl.css" rel="stylesheet">
-  <link href="assets/css/responsive.css" rel="stylesheet">
+  <link href="assets/css/responsive.css?v=lpnav3" rel="stylesheet">
 </head>
 <body class="landing-body">
   <a class="visually-hidden-focusable" href="#main">Skip to content</a>
+
+  <div class="lp-nav-overlay" id="lpNavOverlay" hidden></div>
+  <aside class="lp-sidebar" id="lpSidebar" aria-label="Mobile menu" aria-hidden="true">
+    <div class="lp-sidebar-head">
+      <a href="index.html" class="brand lp-sidebar-brand">
+        <span class="brand-mark" aria-hidden="true"><i class="bi bi-cup-hot-fill"></i></span>
+        <span>SchoolFood</span>
+      </a>
+      <button type="button" class="lp-sidebar-close" id="lpNavClose" aria-label="Close menu">
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      </button>
+    </div>
+    <nav class="lp-sidebar-nav" aria-label="Mobile">
+      <a class="lp-sidebar-link is-active" href="#main">Home</a>
+      <a class="lp-sidebar-link" href="#about">About</a>
+      <a class="lp-sidebar-link" href="#capabilities">Capabilities</a>
+      <a class="lp-sidebar-link" href="#demo">Demo</a>
+      <a class="lp-sidebar-link" href="#how">How it works</a>
+    </nav>
+    <div class="lp-sidebar-foot">
+      <div class="lp-lang-dd lp-lang-dd--sidebar" data-lang-dd>
+        <button type="button" class="lp-lang-toggle" aria-expanded="false" aria-haspopup="listbox" aria-label="Language">
+          <img class="lp-lang-flag" src="https://flagcdn.com/w40/gb.png" width="20" height="14" alt="" data-lang-flag>
+          <span class="lp-lang-code">EN</span>
+          <i class="bi bi-chevron-down" aria-hidden="true"></i>
+        </button>
+        <ul class="lp-lang-menu" role="listbox" hidden>
+          <li role="option">
+            <button type="button" data-lang="en">
+              <img src="https://flagcdn.com/w40/gb.png" width="20" height="14" alt=""> English
+            </button>
+          </li>
+          <li role="option">
+            <button type="button" data-lang="ar">
+              <img src="https://flagcdn.com/w40/sa.png" width="20" height="14" alt=""> العربية
+            </button>
+          </li>
+        </ul>
+      </div>
+      <a href="#demo" class="lp-cta lp-sidebar-cta">Start demo</a>
+    </div>
+  </aside>
 
   <header class="lp-masthead">
     <nav class="landing-nav" aria-label="Primary">
@@ -37,7 +79,7 @@
             <a class="landing-nav-link" href="#demo">Demo</a>
             <a class="landing-nav-link" href="#how">How it works</a>
           </div>
-          <div class="lp-lang-dd" data-lang-dd>
+          <div class="lp-lang-dd lp-lang-dd--desktop" data-lang-dd>
             <button type="button" class="lp-lang-toggle" aria-expanded="false" aria-haspopup="listbox" aria-label="Language">
               <img class="lp-lang-flag" src="https://flagcdn.com/w40/gb.png" width="20" height="14" alt="" data-lang-flag>
               <span class="lp-lang-code">EN</span>
@@ -56,7 +98,10 @@
               </li>
             </ul>
           </div>
-          <a href="#demo" class="lp-cta lp-cta--sm">Start demo</a>
+          <a href="#demo" class="lp-cta lp-cta--sm lp-cta--nav">Start demo</a>
+          <button type="button" class="lp-nav-toggle" id="lpNavToggle" aria-label="Open menu" aria-controls="lpSidebar" aria-expanded="false">
+            <i class="bi bi-list" aria-hidden="true"></i>
+          </button>
         </div>
       </div>
     </nav>
@@ -89,8 +134,8 @@
         <i class="bi bi-chevron-right" aria-hidden="true"></i>
       </button>
 
-      <svg class="lp-hero-wave" viewBox="0 0 1440 72" preserveAspectRatio="none" aria-hidden="true">
-        <path fill="currentColor" d="M0,32 C240,72 480,0 720,24 C960,48 1200,72 1440,28 L1440,72 L0,72 Z"></path>
+      <svg class="lp-hero-wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 72" width="100%" height="72" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <path fill="currentColor" d="M0,40 C180,70 360,10 540,28 C720,46 900,70 1080,36 C1260,8 1350,20 1440,32 L1440,72 L0,72 Z"></path>
       </svg>
     </section>
   </header>
@@ -406,10 +451,10 @@
         window.location.reload();
       });
 
-      // Language dropdown (flag)
+      // Language dropdown (flag) — desktop + sidebar instances
       (function () {
-        var $dd = $('[data-lang-dd]');
-        if (!$dd.length) return;
+        var $dds = $('[data-lang-dd]');
+        if (!$dds.length) return;
         var lang = I18n.lang || 'en';
         var meta = {
           en: { flag: 'https://flagcdn.com/w40/gb.png', code: 'EN' },
@@ -417,25 +462,61 @@
         };
         function syncToggle() {
           var m = meta[lang] || meta.en;
-          $dd.find('[data-lang-flag]').attr('src', m.flag);
-          $dd.find('.lp-lang-code').text(m.code);
+          $dds.find('[data-lang-flag]').attr('src', m.flag);
+          $dds.find('.lp-lang-code').text(m.code);
         }
         syncToggle();
-        $dd.on('click', function (e) { e.stopPropagation(); });
-        $dd.find('.lp-lang-toggle').on('click', function () {
+        $dds.on('click', function (e) { e.stopPropagation(); });
+        $dds.find('.lp-lang-toggle').on('click', function () {
+          var $dd = $(this).closest('[data-lang-dd]');
           var open = $dd.hasClass('is-open');
-          $dd.toggleClass('is-open', !open);
-          $(this).attr('aria-expanded', !open);
-          $dd.find('.lp-lang-menu').prop('hidden', open);
+          $dds.removeClass('is-open');
+          $dds.find('.lp-lang-toggle').attr('aria-expanded', 'false');
+          $dds.find('.lp-lang-menu').prop('hidden', true);
+          if (!open) {
+            $dd.addClass('is-open');
+            $(this).attr('aria-expanded', 'true');
+            $dd.find('.lp-lang-menu').prop('hidden', false);
+          }
         });
-        $dd.on('click', '[data-lang]', function () {
+        $dds.on('click', '[data-lang]', function () {
           I18n.setLang($(this).data('lang'));
           window.location.reload();
         });
         $(document).on('click', function () {
-          $dd.removeClass('is-open');
-          $dd.find('.lp-lang-toggle').attr('aria-expanded', 'false');
-          $dd.find('.lp-lang-menu').prop('hidden', true);
+          $dds.removeClass('is-open');
+          $dds.find('.lp-lang-toggle').attr('aria-expanded', 'false');
+          $dds.find('.lp-lang-menu').prop('hidden', true);
+        });
+      })();
+
+      // Landing mobile sidebar
+      (function () {
+        var $sidebar = $('#lpSidebar');
+        var $overlay = $('#lpNavOverlay');
+        var $toggle = $('#lpNavToggle');
+        var $close = $('#lpNavClose');
+        if (!$sidebar.length || !$toggle.length) return;
+
+        function openNav() {
+          $sidebar.addClass('is-open').attr('aria-hidden', 'false');
+          $overlay.addClass('is-open').prop('hidden', false);
+          $toggle.attr('aria-expanded', 'true');
+          document.body.classList.add('lp-nav-open');
+        }
+        function closeNav() {
+          $sidebar.removeClass('is-open').attr('aria-hidden', 'true');
+          $overlay.removeClass('is-open').prop('hidden', true);
+          $toggle.attr('aria-expanded', 'false');
+          document.body.classList.remove('lp-nav-open');
+        }
+
+        $toggle.on('click', openNav);
+        $close.on('click', closeNav);
+        $overlay.on('click', closeNav);
+        $sidebar.on('click', 'a[href^="#"]', closeNav);
+        $(document).on('keydown', function (e) {
+          if (e.key === 'Escape') closeNav();
         });
       })();
 

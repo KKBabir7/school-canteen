@@ -100,7 +100,7 @@
             <strong data-i18n="installApp">${t('installApp')}</strong>
             <p data-i18n="installAppText">${iosTip ? 'Share → Add to Home Screen' : t('installAppText')}</p>
           </div>
-          <div class="d-flex gap-1 flex-shrink-0">
+          <div class="pwa-actions">
             <button type="button" class="btn-app btn-ghost-app btn-sm-app" id="pwaDismiss">${t('dismiss')}</button>
             ${deferred ? `<button type="button" class="btn-app btn-primary-app btn-sm-app" id="pwaInstall">${t('install')}</button>` : ''}
           </div>
