@@ -128,7 +128,12 @@ iframe {
   }
 
   .page-header--panel .page-actions .btn-app {
-    flex: 1 1 auto;
+    flex: 0 0 auto;
+    width: auto;
+  }
+
+  .page-header--panel .page-actions .btn-app:only-child {
+    align-self: flex-start;
   }
 
   .row.g-4 > [class*="col-"],

@@ -60,8 +60,18 @@
     },
 
     async renderCanteensList() {
-      let list = await CanteenService.getAll();
+      const all = await CanteenService.getAll();
       const f = this.filterState;
+      let list = all.slice();
+
+      if ($('#fpCanteenTotal').length) {
+        const activeCount = all.filter((c) => String(c.status || '').toLowerCase() === 'active').length;
+        const menuCount = all.reduce((n, c) => n + ((c.assignedMenuIds || []).length), 0);
+        $('#fpCanteenTotal').text(all.length);
+        $('#fpCanteenActive').text(activeCount);
+        $('#fpCanteenMenus').text(menuCount);
+        $('#fpCanteenInactive').text(Math.max(0, all.length - activeCount));
+      }
 
       if (f.search) {
         const q = f.search.toLowerCase();

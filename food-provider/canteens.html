@@ -11,31 +11,76 @@
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css" rel="stylesheet">
   <link href="../assets/css/style.css" rel="stylesheet">
-  <link href="../assets/css/dashboard.css" rel="stylesheet">
-  <link href="../assets/css/components.css" rel="stylesheet">
+  <link href="../assets/css/dashboard.css?v=canteens-pro-3" rel="stylesheet">
+  <link href="../assets/css/components.css?v=canteens-pro-3" rel="stylesheet">
   <link href="../assets/css/forms.css" rel="stylesheet">
+  <link href="../assets/css/ordering.css" rel="stylesheet">
   <link href="../assets/css/rtl.css" rel="stylesheet">
-  <link href="../assets/css/responsive.css" rel="stylesheet">
+  <link href="../assets/css/responsive.css?v=canteens-pro-2" rel="stylesheet">
 </head>
 <body>
   <div class="app-shell">
     <div class="app-main">
       <div class="app-content">
-        <nav aria-label="Breadcrumb"><ol class="breadcrumb-app"><li><a href="dashboard.html" data-i18n="dashboard">Dashboard</a></li><li class="separator">/</li><li><span class="current" data-i18n="canteens">Canteens</span></li></ol></nav>
+        <nav aria-label="Breadcrumb">
+          <ol class="breadcrumb-app">
+            <li><a href="dashboard.html" data-i18n="dashboard">Dashboard</a></li>
+            <li class="separator" aria-hidden="true">/</li>
+            <li><span class="current" data-i18n="canteens">Canteens</span></li>
+          </ol>
+        </nav>
 
-        <div class="page-header">
+        <div class="page-header page-header--panel" data-aos="fade-up">
           <div class="page-header-text">
+            <p class="page-kicker"><i class="bi bi-shop-window" aria-hidden="true"></i> Locations</p>
             <h1 data-i18n="canteens">Canteens</h1>
-            <p data-i18n="canteensDesc">Manage physical canteen locations.</p>
+            <p data-i18n="canteensDesc">Manage physical canteen locations operated by your organization.</p>
           </div>
           <div class="page-actions">
-            <button type="button" class="btn-app btn-primary-app" data-bs-toggle="modal" data-bs-target="#addCanteenModal"><i class="bi bi-plus-lg"></i> <span data-i18n="addCanteen">Add Canteen</span></button>
+            <button type="button" class="btn-app btn-primary-app" data-bs-toggle="modal" data-bs-target="#addCanteenModal">
+              <i class="bi bi-plus-lg" aria-hidden="true"></i>
+              <span data-i18n="addCanteen">Add Canteen</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="stat-grid parent-home-stats" data-aos="fade-up">
+          <div class="stat-card stat-card--navy">
+            <div class="stat-card-label">
+              <span data-i18n="canteens">Canteens</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-shop-window"></i></span>
+            </div>
+            <div class="stat-card-value" id="fpCanteenTotal">0</div>
+          </div>
+          <div class="stat-card stat-card--teal">
+            <div class="stat-card-label">
+              <span data-i18n="active">Active</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-check2-circle"></i></span>
+            </div>
+            <div class="stat-card-value" id="fpCanteenActive">0</div>
+          </div>
+          <div class="stat-card stat-card--sky">
+            <div class="stat-card-label">
+              <span data-i18n="menus">Menus</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-journal-richtext"></i></span>
+            </div>
+            <div class="stat-card-value" id="fpCanteenMenus">0</div>
+          </div>
+          <div class="stat-card stat-card--coral">
+            <div class="stat-card-label">
+              <span data-i18n="inactive">Inactive</span>
+              <span class="stat-card-icon" aria-hidden="true"><i class="bi bi-pause-circle"></i></span>
+            </div>
+            <div class="stat-card-value" id="fpCanteenInactive">0</div>
           </div>
         </div>
 
         <div class="filters-bar" data-aos="fade-up">
-          <div class="search-box"><i class="bi bi-search"></i><input type="search" id="searchCanteens" data-i18n-placeholder="search" placeholder="Search"></div>
-          <div class="filter-tabs">
+          <div class="search-box">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <input type="search" id="searchCanteens" data-i18n-placeholder="search" placeholder="Search canteens">
+          </div>
+          <div class="filter-tabs" role="group" aria-label="Status filter">
             <button type="button" class="filter-tab active" data-status="" data-i18n="all">All</button>
             <button type="button" class="filter-tab" data-status="active" data-i18n="active">Active</button>
             <button type="button" class="filter-tab" data-status="inactive" data-i18n="inactive">Inactive</button>
@@ -171,10 +216,10 @@
   <script src="../assets/js/services/menu-service.js"></script>
   <script src="../assets/js/services/order-service.js"></script>
   <script src="../assets/js/app.js"></script>
-  <script src="../assets/js/components.js"></script>
+  <script src="../assets/js/components.js?v=canteens-pro-2"></script>
   <script src="../assets/js/navigation.js"></script>
   <script src="../assets/js/forms.js"></script>
-  <script src="../assets/js/food-provider.js"></script>
+  <script src="../assets/js/food-provider.js?v=canteens-pro-1"></script>
   <script>$(function () { FoodProvider.initCanteensPage(); });</script>
 </body>
 </html>

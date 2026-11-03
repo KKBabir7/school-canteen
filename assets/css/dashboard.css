@@ -1251,19 +1251,28 @@ body.sidebar-collapsed .sidebar-footer {
   transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
   cursor: pointer;
   height: 100%;
-  overflow: hidden;
+  overflow: visible;
 }
 
+.canteen-card,
 .menu-card {
   padding-left: 1.35rem;
 }
 
+.canteen-card-accent,
 .menu-card-accent {
   position: absolute;
   inset: 0 auto 0 0;
   width: 4px;
+  border-radius: 14px 0 0 14px;
   background: linear-gradient(180deg, var(--primary, #314D63), var(--accent, #8FB9AB));
   opacity: 0.85;
+  pointer-events: none;
+}
+
+.canteen-card:has(.dropdown-menu.show),
+.menu-card:has(.dropdown-menu.show) {
+  z-index: 5;
 }
 
 .canteen-card:hover,
@@ -1280,6 +1289,46 @@ body.sidebar-collapsed .sidebar-footer {
   align-items: flex-start;
   gap: 0.75rem;
   margin-bottom: 0.85rem;
+}
+
+.canteen-card-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.canteen-card-avatar {
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--commonColor, #314D63);
+  background: linear-gradient(145deg, rgba(173, 206, 216, 0.55), rgba(143, 185, 171, 0.35));
+  border: 1px solid rgba(49, 77, 99, 0.08);
+}
+
+.canteen-card-title {
+  min-width: 0;
+  flex: 1;
+}
+
+.canteen-card-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.6rem;
+  margin-bottom: 0.2rem;
+}
+
+.canteen-card-menu {
+  flex-shrink: 0;
 }
 
 .menu-card-heading {
@@ -1312,11 +1361,25 @@ body.sidebar-collapsed .sidebar-footer {
 .menu-card .menu-desc {
   font-size: 0.85rem;
   color: #7a8a96;
-  margin: 0 0 0.15rem;
+  margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.canteen-card .school-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+}
+
+.canteen-card .school-name i {
+  color: var(--primary, #314D63);
+  opacity: 0.65;
+  font-size: 0.9rem;
 }
 
 .canteen-card-actions {
@@ -1334,9 +1397,9 @@ body.sidebar-collapsed .sidebar-footer {
 
 .canteen-meta,
 .menu-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem 0.85rem;
   padding-top: 0.95rem;
   margin-top: 0.35rem;
   border-top: 1px solid rgba(49, 77, 99, 0.06);
@@ -1348,12 +1411,27 @@ body.sidebar-collapsed .sidebar-footer {
 .menu-meta span {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
+.canteen-meta i,
 .menu-meta i {
+  flex: 0 0 auto;
+  width: 1rem;
+  text-align: center;
   color: var(--primary, #314D63);
   opacity: 0.7;
+}
+
+@media (max-width: 420px) {
+  .canteen-meta,
+  .menu-meta {
+    grid-template-columns: 1fr;
+  }
 }
 
 .filters-bar .filter-select {

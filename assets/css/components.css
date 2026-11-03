@@ -284,6 +284,15 @@
 }
 
 /* Action menu (3-dot) */
+.action-menu {
+  position: relative;
+  z-index: 2;
+}
+
+.action-menu .dropdown-menu {
+  z-index: 20;
+}
+
 .action-menu .dropdown-toggle {
   width: 32px;
   height: 32px;

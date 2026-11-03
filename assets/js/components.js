@@ -114,18 +114,24 @@
       const school = CanteenService.getSchoolName(canteen.schoolId);
       const menuCount = (canteen.assignedMenuIds || []).length;
       const actions = options.actions !== false;
+      const initial = (name.trim().charAt(0) || 'C').toUpperCase();
 
       return `
         <div class="canteen-card" data-id="${canteen.id}" data-aos="fade-up" role="button" tabindex="0"
              aria-label="${name}">
+          <div class="canteen-card-accent" aria-hidden="true"></div>
           <div class="canteen-card-top">
-            <div>
-              <h3>${name}</h3>
-              <p class="school-name">${school}</p>
+            <div class="canteen-card-heading">
+              <span class="canteen-card-avatar" aria-hidden="true">${initial}</span>
+              <div class="canteen-card-title">
+                <div class="canteen-card-title-row">
+                  <h3>${name}</h3>
+                  ${this.renderStatusBadge(canteen.status)}
+                </div>
+                <p class="school-name"><i class="bi bi-building" aria-hidden="true"></i> ${school}</p>
+              </div>
             </div>
-            <div class="d-flex align-items-center gap-2">
-              ${this.renderStatusBadge(canteen.status)}
-              ${actions ? this.renderActionMenu('canteen', canteen.id, [
+            ${actions ? `<div class="canteen-card-menu">${this.renderActionMenu('canteen', canteen.id, [
                 { action: 'view', label: I18n.t('view'), icon: 'bi-eye' },
                 { action: 'edit', label: I18n.t('edit'), icon: 'bi-pencil' },
                 { action: 'assign', label: I18n.t('assignMenu'), icon: 'bi-link-45deg' },
@@ -133,13 +139,12 @@
                   label: canteen.status === 'active' ? I18n.t('deactivate') : I18n.t('activate'),
                   icon: canteen.status === 'active' ? 'bi-pause-circle' : 'bi-play-circle',
                   danger: canteen.status === 'active' }
-              ]) : ''}
-            </div>
+              ])}</div>` : ''}
           </div>
           <div class="canteen-meta">
             <span><i class="bi bi-telephone" aria-hidden="true"></i> ${canteen.phone || '—'}</span>
             <span><i class="bi bi-envelope" aria-hidden="true"></i> ${canteen.email || '—'}</span>
-            <span><i class="bi bi-journal-text" aria-hidden="true"></i> ${menuCount} ${I18n.t('menus').toLowerCase()}</span>
+            <span><i class="bi bi-journal-richtext" aria-hidden="true"></i> ${menuCount} ${menuCount === 1 ? 'menu' : I18n.t('menus').toLowerCase()}</span>
             <span><i class="bi bi-clock" aria-hidden="true"></i> ${Utils.formatRelative(canteen.lastUpdated)}</span>
           </div>
         </div>
