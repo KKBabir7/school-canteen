@@ -10,7 +10,7 @@
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
   <link href="../assets/css/style.css" rel="stylesheet">
   <link href="../assets/css/dashboard.css" rel="stylesheet">
-  <link href="../assets/css/components.css" rel="stylesheet">
+  <link href="../assets/css/components.css?v=order-line-2" rel="stylesheet">
   <link href="../assets/css/forms.css" rel="stylesheet">
   <link href="../assets/css/rtl.css" rel="stylesheet">
   <link href="../assets/css/responsive.css" rel="stylesheet">
@@ -47,12 +47,14 @@
         </div>
 
         <div class="card-app no-print" data-aos="fade-up">
-          <div class="card-app-header"><h3><i class="bi bi-list-ul" aria-hidden="true"></i> <span data-i18n="items">Order items</span></h3></div>
+          <div class="card-app-header">
+            <h3><i class="bi bi-bag-check" aria-hidden="true"></i> <span data-i18n="items">Order items</span></h3>
+          </div>
           <div class="card-app-body">
-            <div id="odItems"></div>
-            <div class="d-flex justify-content-between pt-3 mt-2 border-top">
-              <strong data-i18n="total">Total</strong>
-              <strong class="fs-5" id="odTotal">₪0</strong>
+            <div class="order-line-list" id="odItems"></div>
+            <div class="order-line-total">
+              <span data-i18n="total">Total</span>
+              <strong id="odTotal">₪0</strong>
             </div>
           </div>
         </div>

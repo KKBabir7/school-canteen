@@ -145,16 +145,26 @@
       $('#odStatus').html(Components.renderStatusBadge(order.status));
       $('#odStepper').html(Components.renderStatusStepper(order.status));
 
-      $('#odItems').html((order.items || []).map((item) => `
+      $('#odItems').html((order.items || []).map((item) => {
+        const name = Utils.localized(item.name) || item.name || 'Item';
+        const qty = item.qty || 1;
+        const lineTotal = (item.price || 0) * qty;
+        const img = item.image
+          ? `<img src="${item.image}" alt="" class="order-line-img" loading="lazy">`
+          : `<span class="order-line-img order-line-img--placeholder" aria-hidden="true"><i class="bi bi-egg-fried"></i></span>`;
+        return `
         <div class="order-line-item">
-          <img src="${item.image || ''}" alt="" class="order-line-img object-cover" loading="lazy">
-          <div class="flex-grow-1">
-            <strong>${Utils.localized(item.name) || item.name}</strong>
-            <span class="text-muted">× ${item.qty || 1}</span>
+          ${img}
+          <div class="order-line-body">
+            <div class="order-line-title">${name}</div>
+            <div class="order-line-meta">
+              <span class="order-line-qty">× ${qty}</span>
+              <span class="order-line-unit">${Utils.moneyHtml(item.price || 0)} each</span>
+            </div>
           </div>
-          <span class="order-line-price">${Utils.moneyHtml((item.price || 0) * (item.qty || 1))}</span>
-        </div>
-      `).join(''));
+          <div class="order-line-price">${Utils.moneyHtml(lineTotal)}</div>
+        </div>`;
+      }).join('') || `<div class="text-muted py-3">${I18n.t('noOrders') || 'No items'}</div>`);
 
       this.renderDetailActions(order);
 
